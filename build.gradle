@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+}
+
+group 'blackout'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+}
+
+jar {
+    manifest {
+        attributes("Main-Class": "me.blackout.Sentry.Main")
+    }
+}
