@@ -1,14 +1,20 @@
 package me.blackout.Sentry;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 public class Main {
-    private static String input;
+    private static String input, salt;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
         JFrame frame = new JFrame("Sentry");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -16,41 +22,41 @@ public class Main {
 
         input = JOptionPane.showInputDialog("Enter master key");
 
-        if (!checkKey(file.readKey())) System.exit(0);
+        if (!checkKey(file.readFile())) System.exit(0);
 
         // Create file if needed
         file.createFile();
 
-        // Read existing file
+        // read file
         file.readFile();
 
-        URL iconURL = Main.class.getResource("/logo.png");
-        /*if (iconURL != null) {
+        URL iconURL = Main.class.getResource("/Sentry.png");
+        if (iconURL != null) {
             Image icon = Toolkit.getDefaultToolkit().getImage(iconURL);
             frame.setIconImage(icon);
         } else {
             System.err.println("Icon file not found in resources!");
-        }*/
+        }
 
         // Set up the display panel and fields
-        JPanel jp = new JPanel(new GridLayout(1, 2, 20, 5)); // 1 row, 2 columns, 10px spacing 5px vertical gap
-        jp.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Padding around elements
-        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel panel = new JPanel();
+
+       // panel.add(b);
 
         // Assemble components and display window
-        frame.add(jp);
-        frame.add(bottomPanel, BorderLayout.SOUTH);
+        frame.add(panel);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);
+
+        // Save file
+        file.saveFile(String.valueOf(checkKey(file.readFile())), salt);
     }
 
+    // Check file
     private static boolean checkKey(String file) {
-        String ctStr = file.substring(10);
-        System.out.println(ctStr);
+        String ctStr = file.substring(11);
         return ctStr.equals(input);
     }
-
-
 }
