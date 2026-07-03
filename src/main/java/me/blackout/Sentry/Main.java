@@ -12,7 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 public class Main {
-    private static String input, salt;
+    public static String input, salt, masterKey;
 
     public static void main(String[] args) throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
         JFrame frame = new JFrame("Sentry");
@@ -20,23 +20,32 @@ public class Main {
 
         FileManager file = new FileManager();
 
-        input = JOptionPane.showInputDialog("Enter master key");
+        // Create file
+        file.create();
 
-        if (!checkKey(file.readFile())) System.exit(0);
+        // Input Box
+        input = file.read().isEmpty() ? JOptionPane.showInputDialog("Set master key") : JOptionPane.showInputDialog("Enter master key");
+        salt = file.read().isEmpty() ? JOptionPane.showInputDialog("Set special word") : JOptionPane.showInputDialog("Enter the special word");
 
-        // Create file if needed
-        file.createFile();
+        // Check file
+        if (file.read().isEmpty()) {
+            masterKey = input;
 
-        // read file
-        file.readFile();
+            file.write(input);
+            file.saveFile("Sentry.txt", masterKey, salt);
 
-        URL iconURL = Main.class.getResource("/Sentry.png");
-        if (iconURL != null) {
-            Image icon = Toolkit.getDefaultToolkit().getImage(iconURL);
-            frame.setIconImage(icon);
-        } else {
-            System.err.println("Icon file not found in resources!");
+            System.exit(0);
+            return;
         }
+
+        // Pass key
+        if (!file.passKey(input, salt)) {
+            System.exit(0);
+            return;
+        }
+
+        // Set Icon for application
+        Utils.setIcon(frame);
 
         // Set up the display panel and fields
         JPanel panel = new JPanel();
@@ -51,12 +60,6 @@ public class Main {
         frame.setVisible(true);
 
         // Save file
-        file.saveFile(String.valueOf(checkKey(file.readFile())), salt);
-    }
-
-    // Check file
-    private static boolean checkKey(String file) {
-        String ctStr = file.substring(11);
-        return ctStr.equals(input);
+        file.saveFile("Sentry.txt", input, salt);
     }
 }
