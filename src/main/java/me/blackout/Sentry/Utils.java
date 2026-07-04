@@ -17,6 +17,12 @@ import java.security.spec.KeySpec;
 public class Utils {
     public static String masterKey, Salt;
 
+    // Setup salts and keys
+    public static void set(String MK, String s) {
+        masterKey = MK;
+        Salt = s;
+    }
+
     // Icon
     public static void setIcon(JFrame frame) {
         URL iconURL = Main.class.getResource("/Sentry.png");

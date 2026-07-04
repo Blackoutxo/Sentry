@@ -12,7 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 public class Main {
-    public static String input, salt, masterKey;
+    public static String input;
 
     public static void main(String[] args) throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException {
         JFrame frame = new JFrame("Sentry");
@@ -25,41 +25,38 @@ public class Main {
 
         // Input Box
         input = file.read().isEmpty() ? JOptionPane.showInputDialog("Set master key") : JOptionPane.showInputDialog("Enter master key");
-        salt = file.read().isEmpty() ? JOptionPane.showInputDialog("Set special word") : JOptionPane.showInputDialog("Enter the special word");
+        Utils.Salt = file.read().isEmpty() ? JOptionPane.showInputDialog("Set special word") : JOptionPane.showInputDialog("Enter the special word");
 
         // Check file
         if (file.read().isEmpty()) {
-            masterKey = input;
+            Utils.masterKey = input;
+            System.out.println("Js created another input lmfao");
 
-            file.write(input);
-            file.saveFile("Sentry.txt", masterKey, salt);
+            file.write("masterkey:" + input, Utils.masterKey, Utils.Salt);
+            //file.saveFile("Sentry.txt", masterKey, salt);
 
             System.exit(0);
             return;
         }
 
         // Pass key
-        if (!file.passKey(input, salt)) {
+        if (!file.passKey(input, Utils.Salt)) {
             System.exit(0);
             return;
         }
+
+        // Data panel
+        Panels.passkeysPanel(frame, file.read());
 
         // Set Icon for application
         Utils.setIcon(frame);
 
         // Set up the display panel and fields
-        JPanel panel = new JPanel();
-
-       // panel.add(b);
 
         // Assemble components and display window
-        frame.add(panel);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
         frame.setVisible(true);
-
-        // Save file
-        file.saveFile("Sentry.txt", input, salt);
     }
 }
