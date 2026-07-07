@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Objects;
 
 public class FileManager {
-    public String path;
+    public String DATA_FILE = "Sentry.dat";
     private Key key;
 
     // Create file
     public void create() throws IOException {
-        File file = new File("Sentry.bin");
+        File file = new File(DATA_FILE);
 
         // Check for existing file
         if (file.exists()) return;
@@ -27,7 +27,7 @@ public class FileManager {
 
     // Write in the file
     public void write(String input, String password) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        File file = new File("Sentry.bin");
+        File file = new File(DATA_FILE);
 
         // String into bytes
         byte[] pTxt = input.getBytes();
@@ -49,7 +49,7 @@ public class FileManager {
             key = Utils.generateKey(password);
             for (String str : decipher()) return str;
         } else {
-            BufferedReader reader = new BufferedReader(new FileReader("Sentry.bin"));
+            BufferedReader reader = new BufferedReader(new FileReader(DATA_FILE));
             String line;
             while ((line = reader.readLine()) != null) {
                 return line;
@@ -93,7 +93,7 @@ public class FileManager {
         Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.DECRYPT_MODE, key);
 
-        byte[] fileBytes = Files.readAllBytes(Path.of("Sentry.bin"));
+        byte[] fileBytes = Files.readAllBytes(Path.of(DATA_FILE));
         byte[] decryptedBytes = cipher.doFinal(fileBytes);
 
         String str = new String(decryptedBytes);
