@@ -31,14 +31,17 @@ public class Main {
         if (file.read(false, "").isEmpty()) {
             masterKey = input;
 
+            // Write password in file
             file.write("masterkey:" + input, masterKey);
 
+            // System exit on success
             System.exit(0);
             return;
         }
 
         // Pass key
         if (!file.passKey(input)) {
+            // System exit on fail
             System.exit(0);
             return;
         }
@@ -53,7 +56,7 @@ public class Main {
         Utils.cFile = file.read(true, masterKey);
 
         // Data panel
-        Panels.passkeysPanel(frame, file.read(true, masterKey));
+        Panels.mainPanel(frame, file.read(true, masterKey));
 
         // Set Icon for application
         Utils.setIcon(frame);
