@@ -14,8 +14,8 @@ public class Main {
     public static String input, salt, masterKey;
 
     public static void main(String[] args) throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException, FontFormatException {
-        JFrame frame = new JFrame("Sentry");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Panels panel = new Panels();
+        panel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Open file manager
         FileManager file = new FileManager();
@@ -56,15 +56,15 @@ public class Main {
         Utils.cFile = file.read(true, masterKey);
 
         // Data panel
-        Panels.mainPanel(frame, file.read(true, masterKey));
+        //Panels.mainPanel(frame, file.read(true, masterKey));
 
         // Set Icon for application
-        Utils.setIcon(frame);
+        Utils.setIcon(panel);
 
         // Assemble components and display window
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(true);
-        frame.setVisible(true);
+        panel.pack();
+        panel.setLocationRelativeTo(null);
+        panel.setResizable(true);
+        panel.setVisible(true);
     }
 }
