@@ -46,9 +46,6 @@ public class Main {
             return;
         }
 
-        // Register font
-        Utils.registerFont();
-
         // Set the master key
         masterKey = input;
 

@@ -1,17 +1,19 @@
 package me.blackout.Sentry;
 
-import org.w3c.dom.Text;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
+import java.io.IOException;
 
 public class Panels extends JFrame {
     // ---------------------------------------------------------------
     //                          Color palette
     // ---------------------------------------------------------------
     private static final Color BUTTON = new Color(32, 157, 234);
+    private static final Color BUTTON_PRESS = new Color(39, 134, 192);
+    private static final Color BUTTON_HOVER = new Color(39, 134, 192);
+
     private static final Color TEXT = new Color(255, 255, 255);
 
     private static final Color PANEL_BG = new Color(52, 50, 50);
@@ -19,12 +21,19 @@ public class Panels extends JFrame {
     private static final Color CARD_BORDER = new Color(255, 255, 255);
 
     // Field vars
+    private final DefaultListModel<Entry> listModel = new DefaultListModel<>();
+    private final JList<Entry> entryList = new JList<>(listModel);
 
-    public Panels() {
+    private final CardLayout cardDetail = new CardLayout();
+
+    // Panel
+    public Panels() throws IOException, FontFormatException {
         super("Sentry");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(980, 600);
         setMinimumSize(new Dimension(760, 440));
+
+        Utils.registerFont();
 
         getContentPane().setBackground(PANEL_BG);
 
@@ -42,7 +51,7 @@ public class Panels extends JFrame {
 
         // Search bar
         TextField search = new TextField("Search for items.....");
-        search.setPreferredSize(new Dimension(500, 38));
+        search.setPreferredSize(new Dimension(0, 38));
         search.setEditable(true);
 
         // Top panel
@@ -64,7 +73,18 @@ public class Panels extends JFrame {
         sideBar.setPreferredSize(new Dimension(220, 0));
         sideBar.setBorder(new EmptyBorder(24, 20, 24, 20));
 
+        Button addButton = new Button("+  ADD KEYS");
+        addButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        addButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+
+        sideBar.add(addButton);
+        sideBar.add(Box.createVerticalStrut(24));
+
         return sideBar;
+    }
+
+    // Record
+    record Entry(String title, String password) {
     }
 
     // ---------------------------------------------------------------
@@ -92,7 +112,11 @@ public class Panels extends JFrame {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            g2.setColor(Panels.BUTTON);
+            Color fill = getModel().isPressed() ? BUTTON_PRESS
+                    : getModel().isRollover() ? BUTTON_HOVER
+                    : BUTTON;
+
+            g2.setColor(fill);
             g2.fill(new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, ARC, ARC));
 
             g2.dispose();
