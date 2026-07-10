@@ -1,6 +1,8 @@
 package me.blackout.Sentry;
 
 import javax.swing.*;
+import javax.swing.border.AbstractBorder;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
@@ -38,7 +40,7 @@ public class Panels extends JFrame {
         getContentPane().setBackground(PANEL_BG);
 
         add(sidePanel(), BorderLayout.WEST);
-        add(mainPanel(), BorderLayout.EAST);
+        add(mainPanel(), BorderLayout.CENTER);
     }
 
     // ---------------------------------------------------------------
@@ -61,6 +63,22 @@ public class Panels extends JFrame {
         top.add(search, BorderLayout.CENTER);
         center.add(top, BorderLayout.NORTH);
 
+        // Entry card
+        entryList.setCellRenderer(new EntryCardRenderer());
+
+        // Scroll panel
+        JScrollPane scroll = new JScrollPane(entryList);
+        center.add(scroll);
+
+        // Button
+        Button addButton = new Button("+  ADD KEYS");
+
+        JPanel bottomBar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        bottomBar.setOpaque(false);
+        bottomBar.setBorder(new EmptyBorder(16, 0, 0, 0)); // space above the button
+        bottomBar.add(addButton);
+
+        center.add(bottomBar, BorderLayout.SOUTH);
         return center;
     }
 
@@ -73,11 +91,6 @@ public class Panels extends JFrame {
         sideBar.setPreferredSize(new Dimension(220, 0));
         sideBar.setBorder(new EmptyBorder(24, 20, 24, 20));
 
-        Button addButton = new Button("+  ADD KEYS");
-        addButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-        addButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
-
-        sideBar.add(addButton);
         sideBar.add(Box.createVerticalStrut(24));
 
         return sideBar;
@@ -90,6 +103,29 @@ public class Panels extends JFrame {
     // ---------------------------------------------------------------
     //  J-Elements modification
     // ---------------------------------------------------------------
+
+    // Cell renderer
+    static class EntryCardRenderer extends JPanel implements ListCellRenderer<Entry> {
+        private final JLabel title = new JLabel();
+        private final JLabel subTitle = new JLabel();
+        private final JLabel avatar = new JLabel();
+
+        EntryCardRenderer() {
+            setLayout(new BorderLayout(12, 0));
+            setOpaque(false);
+
+            setForeground(PANEL_BG);
+            setBackground(PANEL_BG);
+
+            JPanel textPanel = new JPanel();
+
+        }
+
+        @Override
+        public Component getListCellRendererComponent(JList<? extends Entry> list, Entry value, int index, boolean isSelected, boolean cellHasFocus) {
+            return null;
+        }
+    }
 
     // Buttons
     static class Button extends JButton {

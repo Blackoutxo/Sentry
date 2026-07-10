@@ -52,9 +52,6 @@ public class Main {
         // Set current file
         Utils.cFile = file.read(true, masterKey);
 
-        // Data panel
-        //Panels.mainPanel(frame, file.read(true, masterKey));
-
         // Set Icon for application
         Utils.setIcon(panel);
 
