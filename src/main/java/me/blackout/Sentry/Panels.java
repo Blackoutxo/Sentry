@@ -102,6 +102,7 @@ public class Panels extends JFrame {
         return sideBar;
     }
 
+    // Dialog panel
     public void openAddDialog() {
         JDialog dialog = new JDialog(this, "Add new key", true);
         JPanel form = new JPanel(new GridBagLayout());
@@ -138,8 +139,27 @@ public class Panels extends JFrame {
         gbc.gridx = 1; gbc.gridy = 1; gbc.weightx = 1;
         form.add(password, gbc);
 
+        // Button
+        JPanel buttonBar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
+        buttonBar.setBackground(PANEL_BG);
+        buttonBar.setBorder(new EmptyBorder(0, 0, 16, 20));
+
+        // Cancel button
+        Button cancel = new Button("CANCEL");
+
+        cancel.addActionListener(e -> {
+            dialog.dispose();
+        });
+
+        // Save button
+        Button save = new Button("SAVE");
+
+        buttonBar.add(cancel);
+        buttonBar.add(save);
+
         // Pack dialog box
         dialog.add(form);
+        dialog.add(buttonBar);
 
         dialog.pack();
         dialog.setSize(Math.max(dialog.getWidth(), 380), dialog.getHeight());
