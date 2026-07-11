@@ -26,7 +26,7 @@ public class FileManager {
     }
 
     // Write in the file
-    public void write(String input, String password) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    public void save(String input, String password) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         File file = new File(DATA_FILE);
 
         // String into bytes
@@ -64,7 +64,7 @@ public class FileManager {
     public boolean passKey(String input) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
         key = Utils.generateKey(input);
         for (String line : decipher()) {
-             if (line.contains("masterkey:")) {
+             if (line.contains("masterkey|")) {
                  return Objects.equals(input, line.substring(10));
              }
          }
