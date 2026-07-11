@@ -16,7 +16,8 @@ public class Panels extends JFrame {
     private static final Color BUTTON_PRESS = new Color(39, 134, 192);
     private static final Color BUTTON_HOVER = new Color(39, 134, 192);
 
-    private static final Color TEXT = new Color(255, 255, 255);
+    private static final Color TEXT = new Color(253, 253, 253);
+    private static final Color TEXT_MUTED = new Color(138, 136, 158);
 
     private static final Color PANEL_BG = new Color(52, 50, 50);
     private static final Color SIDEBAR_BG = new Color(43, 103, 178);
@@ -73,6 +74,11 @@ public class Panels extends JFrame {
         // Button
         Button addButton = new Button("+  ADD KEYS");
 
+        // Button action
+        addButton.addActionListener(e -> {
+            openAddDialog();
+        });
+
         JPanel bottomBar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         bottomBar.setOpaque(false);
         bottomBar.setBorder(new EmptyBorder(16, 0, 0, 0)); // space above the button
@@ -96,6 +102,52 @@ public class Panels extends JFrame {
         return sideBar;
     }
 
+    public void openAddDialog() {
+        JDialog dialog = new JDialog(this, "Add new key", true);
+        JPanel form = new JPanel(new GridBagLayout());
+
+        dialog.setBackground(PANEL_BG);
+        form.setBackground(PANEL_BG);
+
+        // Layout constraints
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // Title
+        JLabel titleL = new JLabel("TITLE");
+        JTextField title = new TextField("");
+
+        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0; // For title label
+        titleL.setFont(Utils.spaceGrotesk.deriveFont(14f));
+        titleL.setForeground(TEXT);
+        form.add(titleL, gbc);
+
+        gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = 1; // For title text field
+        form.add(title, gbc);
+
+        // Passkey
+        JLabel passL = new JLabel("PASSWORD");
+        JPasswordField password = new PasswordField();
+
+        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
+        passL.setFont(Utils.spaceGrotesk.deriveFont(14f));
+        passL.setForeground(TEXT);
+        form.add(passL, gbc);
+
+        gbc.gridx = 1; gbc.gridy = 1; gbc.weightx = 1;
+        form.add(password, gbc);
+
+        // Pack dialog box
+        dialog.add(form);
+
+        dialog.pack();
+        dialog.setSize(Math.max(dialog.getWidth(), 380), dialog.getHeight());
+        dialog.setLocationRelativeTo(this);
+        dialog.setResizable(false);
+        dialog.setVisible(true);
+    }
+
     // Record
     record Entry(String title, String password) {
     }
@@ -114,16 +166,28 @@ public class Panels extends JFrame {
             setLayout(new BorderLayout(12, 0));
             setOpaque(false);
 
-            setForeground(PANEL_BG);
-            setBackground(PANEL_BG);
-
             JPanel textPanel = new JPanel();
+            textPanel.setOpaque(false);
+            textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
 
+            title.setFont(Utils.spaceGrotesk.deriveFont(Font.BOLD, 14f));
+            title.setForeground(TEXT);
+
+            subTitle.setFont(Utils.spaceGrotesk.deriveFont(12f));
+            subTitle.setForeground(TEXT_MUTED);
+
+            textPanel.add(title);
+            textPanel.add(subTitle);
+
+            add(textPanel, BorderLayout.CENTER);
         }
 
         @Override
-        public Component getListCellRendererComponent(JList<? extends Entry> list, Entry value, int index, boolean isSelected, boolean cellHasFocus) {
-            return null;
+        public Component getListCellRendererComponent(JList<? extends Entry> list, Entry entry, int index, boolean isSelected, boolean cellHasFocus) {
+
+            title.setText(entry.title);
+
+            return list;
         }
     }
 
@@ -171,7 +235,8 @@ public class Panels extends JFrame {
             this.placeholder = placeholder;
             setOpaque(false);
             setBorder(new EmptyBorder(8, 14, 8, 14));
-            setFont(getFont().deriveFont(13f));
+            setFont(Utils.spaceGrotesk.deriveFont(13f));
+            setForeground(TEXT);
         }
 
         @Override
@@ -179,9 +244,14 @@ public class Panels extends JFrame {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+            // Box
+            g2.setColor(PANEL_BG);
             g2.fill(new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, 12, 12));
+
+            // Box border
             g2.setColor(CARD_BORDER);
             g2.draw(new RoundRectangle2D.Float(0, 0, getWidth() - 2, getHeight() - 2, 12, 12));
+
             g2.dispose();
             super.paintComponent(g);
 
@@ -189,13 +259,42 @@ public class Panels extends JFrame {
                 Graphics2D pg = (Graphics2D) g.create();
                 pg.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                pg.setColor(TEXT);
-                pg.setFont(Utils.spaceGrotesk);
+                //pg.setColor(TEXT);
+                pg.setFont(Utils.spaceGrotesk.deriveFont(13f));
 
                 FontMetrics fm = pg.getFontMetrics();
-                pg.drawString(placeholder, getInsets().left, (getHeight() + fm.getAscent() - fm.getDescent()) / 2);
+                pg.drawString(placeholder, getInsets().left + 10, (getHeight() + fm.getAscent() - fm.getDescent()) / 2);
                 pg.dispose();
             }
+        }
+    }
+
+    // Password field
+    static class PasswordField extends JPasswordField {
+
+        PasswordField() {
+            setOpaque(false);
+            setBorder(new EmptyBorder(8, 14, 8, 14));
+            setFont(Utils.spaceGrotesk.deriveFont(13f));
+            setForeground(Color.WHITE);
+            setCaretColor(Color.WHITE);
+        }
+
+        @Override
+        public void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Box
+            g2.setColor(PANEL_BG);
+            g2.fill(new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, 12, 12));
+
+            // Box border
+            g2.setColor(CARD_BORDER);
+            g2.draw(new RoundRectangle2D.Float(0, 0, getWidth() - 2, getHeight() - 2, 12, 12));
+
+            g2.dispose();
+            super.paintComponent(g);
         }
     }
 }
