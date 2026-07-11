@@ -23,11 +23,6 @@ public class Utils {
 
     public static Font spaceGrotesk;
 
-    // Initiate generators
-    public static void initiateGenerator() {
-
-    }
-
     // Register font
     public static void registerFont() throws IOException, FontFormatException {
         InputStream is = Utils.class.getResourceAsStream("/fonts/SpaceGrotesk/static/SpaceGrotesk-Regular.ttf");
@@ -48,10 +43,11 @@ public class Utils {
     public static Key generateKey(String masterKey) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         FileManager file = new FileManager();
 
+        // Read file
         String str = file.read("", file.SALT_FILE, false);
-
         byte[] salt =  str.getBytes();
 
+        // Set-up key
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
         KeySpec spec = new PBEKeySpec(masterKey.toCharArray(), salt, 65536, 256);
         SecretKey tmp = factory.generateSecret(spec);
