@@ -34,8 +34,6 @@ public class FileManager {
      * Saving file
      */
     public void save(String input, String password) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        File file = new File(DATA_FILE);
-
         // String into bytes
         byte[] pTxt = (input).getBytes();
         Key secret = Utils.generateKey(password);
@@ -46,7 +44,7 @@ public class FileManager {
         byte[] encryptedText = cipher.doFinal(pTxt);
 
         // Write the input into the save file
-        FileOutputStream IStream = new FileOutputStream(file);
+        FileOutputStream IStream = new FileOutputStream(DATA_FILE);
         IStream.write(encryptedText);
     }
 
