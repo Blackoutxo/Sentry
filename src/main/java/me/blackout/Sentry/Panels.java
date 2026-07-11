@@ -1,5 +1,8 @@
 package me.blackout.Sentry;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import javax.swing.border.AbstractBorder;
 import javax.swing.border.Border;
@@ -7,6 +10,9 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 public class Panels extends JFrame {
     // ---------------------------------------------------------------
@@ -142,24 +148,42 @@ public class Panels extends JFrame {
         dialog.add(form, BorderLayout.CENTER);
 
         // Button
-        JPanel buttonBar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
+        JPanel buttonBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 8));
         buttonBar.setBackground(PANEL_BG);
-        buttonBar.setBorder(new EmptyBorder(0, 0, 16, 20));
+        buttonBar.setBorder(new EmptyBorder(0, 0, 16, 0));
 
         // Cancel button
         Button cancel = new Button("CANCEL");
 
-        cancel.addActionListener(e -> {
-            dialog.dispose();
-        });
+        cancel.addActionListener(e ->
+            dialog.dispose()
+        );
 
         // Save button
         Button save = new Button("SAVE");
 
+        save.addActionListener(e -> {
+            FileManager file = new FileManager();
+
+            String strTitle = title.getText().trim();
+            String passKey = new String(password.getPassword());
+
+            System.out.println(strTitle + " " + passKey);
+
+            if (strTitle.isEmpty() || passKey.isEmpty()) return;
+
+            try {
+                file.write("\n".getBytes());
+                file.save(strTitle + "|" + passKey, Main.masterKey);
+            } catch (IOException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException |
+                     NoSuchPaddingException | InvalidKeySpecException | NoSuchAlgorithmException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
         buttonBar.add(cancel);
         buttonBar.add(save);
-
-        //dialog.add(buttonBar);
+        dialog.add(buttonBar, BorderLayout.SOUTH);
 
         // Pack dialog box
         dialog.pack();
