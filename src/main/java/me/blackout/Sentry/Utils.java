@@ -14,6 +14,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 
@@ -21,6 +22,11 @@ public class Utils {
     public static String cFile;
 
     public static Font spaceGrotesk;
+
+    // Initiate generators
+    public static void initiateGenerator() {
+
+    }
 
     // Register font
     public static void registerFont() throws IOException, FontFormatException {
@@ -47,5 +53,14 @@ public class Utils {
         SecretKey tmp = factory.generateSecret(spec);
 
         return new SecretKeySpec(tmp.getEncoded(), "AES");
+    }
+
+    // Salt *Gotta make it salty
+    public static byte[] generateSalt() {
+        SecureRandom secureRandom = new SecureRandom();
+        byte[] salt = new byte[16];
+        secureRandom.nextBytes(salt);
+
+        return salt;
     }
 }
