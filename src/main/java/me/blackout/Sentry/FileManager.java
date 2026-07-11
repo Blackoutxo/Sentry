@@ -43,6 +43,11 @@ public class FileManager {
         IStream.write(encryptedText);
     }
 
+    public void write(String input) throws IOException {
+        FileOutputStream IStream = new FileOutputStream(DATA_FILE);
+        IStream.write(input.getBytes());
+    }
+
     // Read existing file
     public String read(boolean decipher, String password) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException {
         if (decipher) {
@@ -72,24 +77,7 @@ public class FileManager {
         return false;
     }
 
-    // Encrypt created file
-    /*public void saveFile(String file,String password, String Salt) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        // Read in bytes
-        byte[] pTxt = Files.readAllBytes(Path.of(file));
-
-        // Generate a key
-        Key secret = Utils.generateKey(password, Salt);
-
-        // Encrypt the file
-        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, secret);
-        byte[] encryptedText = cipher.doFinal(pTxt);
-
-        // Write the encrypted file
-        Files.write(Paths.get("Sentry.txt"), encryptedText);
-    }*/
-
-    public List<String> decipher() throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
+    public List<String> decipher() throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.DECRYPT_MODE, key);
 

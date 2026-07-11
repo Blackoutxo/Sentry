@@ -11,7 +11,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 public class Main {
-    public static String input, salt, masterKey;
+    public static String input, masterKey;
+    public static byte[] salt;
 
     public static void main(String[] args) throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException, FontFormatException {
         Panels panel = new Panels();
@@ -20,12 +21,14 @@ public class Main {
         // Open file manager
         FileManager file = new FileManager();
 
+        // Generate salt once
+        if (file.read(false, "").isEmpty()) salt = Utils.generateSalt();
+
         // Create file
         file.create();
 
         // Input Box
         input = file.read(false, "").isEmpty() ? JOptionPane.showInputDialog("Set master key") : JOptionPane.showInputDialog("Enter master key");
-        salt = file.read(false, "").isEmpty() ? JOptionPane.showInputDialog("Set special word") : JOptionPane.showInputDialog("Enter the special word");
 
         // Check file
         if (file.read(false, "").isEmpty()) {
