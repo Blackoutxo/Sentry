@@ -32,10 +32,11 @@ public class Main {
             masterKey = input;
 
             // Write password in file
-            file.write("masterkey:" + input, masterKey);
+            file.save("masterkey|" + input, masterKey);
 
             // System exit on success
             System.exit(0);
+
             return;
         }
 
