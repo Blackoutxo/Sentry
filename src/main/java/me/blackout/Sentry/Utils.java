@@ -1,7 +1,6 @@
 package me.blackout.Sentry;
 
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
+import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.*;
@@ -12,6 +11,7 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -45,8 +45,12 @@ public class Utils {
     }
 
     // Key generation
-    public static Key generateKey(String masterKey) throws NoSuchAlgorithmException, InvalidKeySpecException, UnknownHostException {
-        byte[] salt =  (Main.salt + System.getProperty("os.name") + System.getProperty("user.name") + InetAddress.getLocalHost().getHostName()).getBytes();
+    public static Key generateKey(String masterKey) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+        FileManager file = new FileManager();
+
+        String str = file.read("", file.SALT_FILE, false);
+
+        byte[] salt =  str.getBytes();
 
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
         KeySpec spec = new PBEKeySpec(masterKey.toCharArray(), salt, 65536, 256);

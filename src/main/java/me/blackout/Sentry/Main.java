@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
 
 public class Main {
     public static String input, masterKey;
@@ -21,18 +22,21 @@ public class Main {
         // Open file manager
         FileManager file = new FileManager();
 
-        // Generate salt once
-        if (file.read(false, "").isEmpty()) salt = Utils.generateSalt();
-
         // Create file
         file.create();
 
+        // Generate salt once
+        if (file.read("", file.DATA_FILE, false).isEmpty()) salt = Utils.generateSalt();
+
         // Input Box
-        input = file.read(false, "").isEmpty() ? JOptionPane.showInputDialog("Set master key") : JOptionPane.showInputDialog("Enter master key");
+        input = file.read("", file.DATA_FILE, false).isEmpty() ? JOptionPane.showInputDialog("Set master key") : JOptionPane.showInputDialog("Enter master key");
 
         // Check file
-        if (file.read(false, "").isEmpty()) {
+        if (file.read("", file.DATA_FILE, false).isEmpty()) {
             masterKey = input;
+
+            // Save the seasoning
+            file.write(salt);
 
             // Write password in file
             file.save("masterkey|" + input, masterKey);
@@ -54,7 +58,7 @@ public class Main {
         masterKey = input;
 
         // Set current file
-        Utils.cFile = file.read(true, masterKey);
+        Utils.cFile = file.read(masterKey, file.DATA_FILE, false);
 
         // Set Icon for application
         Utils.setIcon(panel);

@@ -139,6 +139,8 @@ public class Panels extends JFrame {
         gbc.gridx = 1; gbc.gridy = 1; gbc.weightx = 1;
         form.add(password, gbc);
 
+        dialog.add(form, BorderLayout.CENTER);
+
         // Button
         JPanel buttonBar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 8));
         buttonBar.setBackground(PANEL_BG);
@@ -157,10 +159,9 @@ public class Panels extends JFrame {
         buttonBar.add(cancel);
         buttonBar.add(save);
 
-        // Pack dialog box
-        dialog.add(form);
-        dialog.add(buttonBar);
+        //dialog.add(buttonBar);
 
+        // Pack dialog box
         dialog.pack();
         dialog.setSize(Math.max(dialog.getWidth(), 380), dialog.getHeight());
         dialog.setLocationRelativeTo(this);
@@ -180,7 +181,7 @@ public class Panels extends JFrame {
     static class EntryCardRenderer extends JPanel implements ListCellRenderer<Entry> {
         private final JLabel title = new JLabel();
         private final JLabel subTitle = new JLabel();
-        private final JLabel avatar = new JLabel();
+        //private final JLabel avatar = new JLabel();
 
         EntryCardRenderer() {
             setLayout(new BorderLayout(12, 0));
