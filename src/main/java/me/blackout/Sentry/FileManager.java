@@ -2,18 +2,21 @@ package me.blackout.Sentry;
 
 import javax.crypto.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 public class FileManager {
-    public String DATA_FILE = "Sentry.dat";
-    public String SALT_FILE = "SalTY.dat";
+    public String DATA_FILE = "Sentry.txt";
+    public String SALT_FILE = "SalTY.txt";
     private Key key;
 
     /**
@@ -43,16 +46,19 @@ public class FileManager {
         cipher.init(Cipher.ENCRYPT_MODE, secret);
         byte[] encryptedText = cipher.doFinal(pTxt);
 
+        String str = new String(encryptedText);
+
+        //System.out.println(Arrays.toString(str .toCharArray()));
+
         // Write the input into the save file
-        FileOutputStream IStream = new FileOutputStream(DATA_FILE);
-        IStream.write(encryptedText);
+
     }
 
     /**
      * Byte Write
      */
-    public void write(byte[] input) throws IOException {
-        FileOutputStream IStream = new FileOutputStream(SALT_FILE);
+    public void write(byte[] input, String file) throws IOException {
+        FileOutputStream IStream = new FileOutputStream(file);
         IStream.write(input);
     }
 
@@ -78,24 +84,38 @@ public class FileManager {
     // Check if user has password or not
     public boolean passKey(String input) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
         key = Utils.generateKey(input);
-        for (String line : decipher(DATA_FILE)) {
-             if (line.contains("masterkey|")) {
-                 return Objects.equals(input, line.substring(10));
-             }
-         }
+
+        int cn = 0;
+        for (String str : decipher(DATA_FILE)) {
+            cn++;
+
+            System.out.println(cn + " " + str);
+
+            return Objects.equals(input, str.substring(10));
+        }
 
         return false;
     }
 
     public List<String> decipher(String file) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-        Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.DECRYPT_MODE, key);
+        BufferedReader reader = new BufferedReader(new FileReader(file));
 
-        byte[] fileBytes = Files.readAllBytes(Path.of(file));
-        byte[] decryptedBytes = cipher.doFinal(fileBytes);
+        while (reader.readLine() != null) {
 
-        String str = new String(decryptedBytes);
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, key);
 
-        return List.of(str);
+            byte[] fileBytes = Files.readAllBytes(Path.of(file));
+            byte[] decryptedBytes = cipher.doFinal(fileBytes);
+
+            String readableString = new String(decryptedBytes, StandardCharsets.UTF_8);
+
+            return List.of(readableString);
+        }
+
+        // Close reader
+        reader.close();
+
+        return Collections.singletonList("");
     }
 }

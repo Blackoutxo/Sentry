@@ -35,7 +35,7 @@ public class Main {
             masterKey = input;
 
             // Save the seasoning
-            file.write(salt);
+            file.write(salt, file.SALT_FILE);
 
             // Write password in file
             file.save("masterkey|" + input, masterKey);
@@ -47,11 +47,11 @@ public class Main {
         }
 
         // Pass key
-        if (!file.passKey(input)) {
+        /*if (!file.passKey(input)) {
             // System exit on fail
             System.exit(0);
             return;
-        }
+        }*/
 
         // Set the master key
         masterKey = input;

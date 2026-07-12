@@ -168,13 +168,13 @@ public class Panels extends JFrame {
             String strTitle = title.getText().trim();
             String passKey = new String(password.getPassword());
 
-            System.out.println(strTitle + " " + passKey);
-
             if (strTitle.isEmpty() || passKey.isEmpty()) return;
 
             try {
-                file.write("\n".getBytes());
+                file.write("\n".getBytes(), file.DATA_FILE);
                 file.save(strTitle + "|" + passKey, Main.masterKey);
+
+                dialog.dispose();
             } catch (IOException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException |
                      NoSuchPaddingException | InvalidKeySpecException | NoSuchAlgorithmException ex) {
                 throw new RuntimeException(ex);
