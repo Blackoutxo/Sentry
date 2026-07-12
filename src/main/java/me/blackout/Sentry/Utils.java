@@ -5,21 +5,21 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Utils {
-    public static String cFile;
+    public static List<String> cFile = new ArrayList<>();
+    public static List<Entry> allEntries = new ArrayList<>();
 
     public static Font spaceGrotesk;
 
@@ -62,5 +62,9 @@ public class Utils {
         secureRandom.nextBytes(salt);
 
         return salt;
+    }
+
+    // Record
+    public record Entry(String title, String password) {
     }
 }

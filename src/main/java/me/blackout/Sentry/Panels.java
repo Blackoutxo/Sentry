@@ -30,8 +30,8 @@ public class Panels extends JFrame {
     private static final Color CARD_BORDER = new Color(255, 255, 255);
 
     // Field vars
-    private final DefaultListModel<Entry> listModel = new DefaultListModel<>();
-    private final JList<Entry> entryList = new JList<>(listModel);
+    private final DefaultListModel<Utils.Entry> listModel = new DefaultListModel<>();
+    private final JList<Utils.Entry> entryList = new JList<>(listModel);
 
     private final CardLayout cardDetail = new CardLayout();
 
@@ -193,16 +193,12 @@ public class Panels extends JFrame {
         dialog.setVisible(true);
     }
 
-    // Record
-    record Entry(String title, String password) {
-    }
-
     // ---------------------------------------------------------------
     //  J-Elements modification
     // ---------------------------------------------------------------
 
     // Cell renderer
-    static class EntryCardRenderer extends JPanel implements ListCellRenderer<Entry> {
+    static class EntryCardRenderer extends JPanel implements ListCellRenderer<Utils.Entry> {
         private final JLabel title = new JLabel();
         private final JLabel subTitle = new JLabel();
         //private final JLabel avatar = new JLabel();
@@ -228,9 +224,9 @@ public class Panels extends JFrame {
         }
 
         @Override
-        public Component getListCellRendererComponent(JList<? extends Entry> list, Entry entry, int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList<? extends Utils.Entry> list, Utils.Entry entry, int index, boolean isSelected, boolean cellHasFocus) {
 
-            title.setText(entry.title);
+            title.setText(entry.title());
 
             return list;
         }

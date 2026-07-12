@@ -25,12 +25,12 @@ public class Main {
         file.create();
 
         // Generate salt once
-        if (file.read("", file.DATA_FILE, false).isEmpty()) salt = Utils.generateSalt();
+        if (file.read("", file.SALT_FILE, false).isEmpty()) salt = Utils.generateSalt();
 
         // Input Box
         input = file.read("", file.DATA_FILE, false).isEmpty() ? JOptionPane.showInputDialog("Set master key") : JOptionPane.showInputDialog("Enter master key");
 
-        // Check file
+        // Check file & set masterkey for once
         if (file.read("", file.DATA_FILE, false).isEmpty()) {
             masterKey = input;
 
@@ -47,17 +47,14 @@ public class Main {
         }
 
         // Pass key
-        /*if (!file.passKey(input)) {
+        if (!file.passKey(input)) {
             // System exit on fail
             System.exit(0);
             return;
-        }*/
+        }
 
         // Set the master key
         masterKey = input;
-
-        // Set current file
-        Utils.cFile = file.read(masterKey, file.DATA_FILE, false);
 
         // Set Icon for application
         Utils.setIcon(panel);
