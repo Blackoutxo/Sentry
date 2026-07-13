@@ -1,121 +1,131 @@
 package me.blackout.Sentry;
 
 import javax.crypto.*;
+import javax.crypto.spec.GCMParameterSpec;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+
+import static java.security.CryptoPrimitive.SECURE_RANDOM;
 
 public class FileManager {
     public String DATA_FILE = "Sentry.txt";
     public String SALT_FILE = "SalTY.txt";
-    private Key key;
+
+    public Key key;
+
+    public SecureRandom secRandom = new SecureRandom();
 
     /**
      * Create File
      * */
-    public void create() throws IOException {
+    public void create() throws IOException, GeneralSecurityException {
         File file = new File(DATA_FILE);
         File saltyFile = new File(SALT_FILE);
+
+        // Generate key
+        key = Utils.generateKey(Main.input);
 
         // Check for existing file
         if (file.exists() && saltyFile.exists()) return;
 
+        // Create file
         file.createNewFile();
         saltyFile.createNewFile();
     }
 
     /**
-     * Saving file
+     * Read file
      */
-    public void save(String input, String password) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        // String into bytes
-        byte[] pTxt = (input).getBytes();
-        Key secret = Utils.generateKey(password);
-
-        // Encrypt the file
-        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, secret);
-        byte[] encryptedText = cipher.doFinal(pTxt);
-
-        String str = new String(encryptedText);
-
-        //System.out.println(Arrays.toString(str .toCharArray()));
-
-        // Write the input into the save file
-
+    public String read(String file) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line = reader.readLine();
+            reader.close();
+            return line;
+        }
     }
 
     /**
-     * Byte Write
+     * Load the file
      */
-    public void write(byte[] input, String file) throws IOException {
-        FileOutputStream IStream = new FileOutputStream(file);
-        IStream.write(input);
-    }
-
-    /**
-     * Read selected file
-     */
-    public String read(String password, String file, boolean decipher) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException {
-        if (decipher) {
-            key = Utils.generateKey(password);
-            for (String str : decipher(file)) return str;
-        } else {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+    public List<Utils.Entry> load(String file) throws IOException, GeneralSecurityException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                return line;
+                if (line.isBlank()) continue;
+
+                String[] parts = line.split(",", 2);
+                if (parts.length != 2) continue; // Skip malformed parts
+
+                // Decrypt title & passwords
+                String title = decryptField(parts[0]);
+                String password = decryptField(parts[1]);
+
+                // Add to entry
+                Utils.allEntries.add(new Utils.Entry(title, password));
             }
-            reader.close();
         }
 
-        return "";
+        return Utils.allEntries;
     }
 
-    // Check if user has password or not
-    public boolean passKey(String input) throws NoSuchPaddingException, IllegalBlockSizeException, IOException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, InvalidKeySpecException {
-        key = Utils.generateKey(input);
+    /**
+     *  Writing  & Saving
+     */
+    public void save(String input) throws GeneralSecurityException, IOException {
+        // String into bytes
+        String IPT = encryptField(input);
 
-        int cn = 0;
-        for (String str : decipher(DATA_FILE)) {
-            cn++;
-
-            System.out.println(cn + " " + str);
-
-            return Objects.equals(input, str.substring(10));
+        // Write the input into the save file
+        try (FileWriter writer = new FileWriter(DATA_FILE, true)) { // Make ts to append (I kept overwriting the files as it wasn't append)......Bravo!
+            writer.write(IPT);
+            writer.write(System.lineSeparator());
         }
-
-        return false;
     }
 
-    public List<String> decipher(String file) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-
-        while (reader.readLine() != null) {
-
-            Cipher cipher = Cipher.getInstance("AES");
-            cipher.init(Cipher.DECRYPT_MODE, key);
-
-            byte[] fileBytes = Files.readAllBytes(Path.of(file));
-            byte[] decryptedBytes = cipher.doFinal(fileBytes);
-
-            String readableString = new String(decryptedBytes, StandardCharsets.UTF_8);
-
-            return List.of(readableString);
+    public void write(byte[] input, String file) throws IOException {
+        try (FileOutputStream IStream = new FileOutputStream(file, true)) {
+            IStream.write(input);
         }
+    }
 
-        // Close reader
-        reader.close();
+    /**
+     * Encryption & Decryption
+     */
+    private String encryptField(String token) throws GeneralSecurityException {
+        byte[] iv = new byte[12];
+        secRandom.nextBytes(iv);
 
-        return Collections.singletonList("");
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+        GCMParameterSpec spec = new GCMParameterSpec(128, iv);
+        cipher.init(Cipher.ENCRYPT_MODE, key, spec);
+
+        byte[] cipherBytes = cipher.doFinal(token.getBytes(StandardCharsets.UTF_8));
+
+        byte[] combined = new byte[iv.length + cipherBytes.length];
+        System.arraycopy(iv, 0, combined, 0, iv.length);
+        System.arraycopy(cipherBytes, 0, combined, iv.length, cipherBytes.length);
+
+        return Base64.getEncoder().encodeToString(combined);
+    }
+
+    private String decryptField(String token) throws GeneralSecurityException {
+        byte[] combined = Base64.getDecoder().decode(token);
+
+        byte[] iv = new byte[12];
+        byte[] cipherBytes = new byte[combined.length - 12];
+        System.arraycopy(combined, 0, iv, 0, 12);
+        System.arraycopy(combined, 12, cipherBytes, 0, cipherBytes.length);
+
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+        GCMParameterSpec spec = new GCMParameterSpec(128, iv);
+        cipher.init(Cipher.DECRYPT_MODE, key, spec);
+
+        byte[] plainBytes = cipher.doFinal(cipherBytes);
+        return new String(plainBytes, StandardCharsets.UTF_8);
     }
 }
