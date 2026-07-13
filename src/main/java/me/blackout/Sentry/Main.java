@@ -1,20 +1,15 @@
 package me.blackout.Sentry;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import java.security.GeneralSecurityException;
 
 public class Main {
     public static String input, masterKey;
     public static byte[] salt;
 
-    public static void main(String[] args) throws IOException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException, InvalidKeyException, FontFormatException {
+    public static void main(String[] args) throws IOException, GeneralSecurityException, FontFormatException {
         Panels panel = new Panels();
         panel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -25,20 +20,20 @@ public class Main {
         file.create();
 
         // Generate salt once
-        if (file.read("", file.SALT_FILE, false).isEmpty()) salt = Utils.generateSalt();
+        if (file.read(file.SALT_FILE).isEmpty()) salt = Utils.generateSalt();
 
         // Input Box
-        input = file.read("", file.DATA_FILE, false).isEmpty() ? JOptionPane.showInputDialog("Set master key") : JOptionPane.showInputDialog("Enter master key");
+        input = file.read(file.DATA_FILE).isEmpty() ? JOptionPane.showInputDialog("Set master key") : JOptionPane.showInputDialog("Enter master key");
 
         // Check file & set masterkey for once
-        if (file.read("", file.DATA_FILE, false).isEmpty()) {
+        if (file.read(file.DATA_FILE).isEmpty()) {
             masterKey = input;
 
             // Save the seasoning
             file.write(salt, file.SALT_FILE);
 
             // Write password in file
-            file.save("masterkey|" + input, masterKey);
+            file.save("masterkey" + "|" + input);
 
             // System exit on success
             System.exit(0);
@@ -47,9 +42,8 @@ public class Main {
         }
 
         // Pass key
-        if (!file.passKey(input)) {
-            // System exit on fail
-            System.exit(0);
+        if (!Utils.checkMasterkey(input)) {
+            System.exit(0); // System exit on fail
             return;
         }
 
