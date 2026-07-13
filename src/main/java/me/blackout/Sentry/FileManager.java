@@ -38,14 +38,14 @@ public class FileManager {
     /**
      * Read file
      */
-    public String read(String file) throws IOException {
+    public String read(String file) {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            if (reader.readLine() != null) {
-                String line = reader.readLine();
-                reader.close();
-                return line;
-            }
+            String line = reader.readLine();
+            if (line != null) return line;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
         return "";
     }
 
@@ -78,6 +78,9 @@ public class FileManager {
      *  Writing  & Saving
      */
     public void save(String input) throws GeneralSecurityException, IOException {
+        // Set key
+        key = Utils.generateKey(Main.input);
+
         // String into bytes
         String IPT = encryptField(input);
 

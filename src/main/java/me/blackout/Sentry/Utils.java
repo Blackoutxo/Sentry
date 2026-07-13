@@ -38,12 +38,14 @@ public class Utils {
 
     // Check masterkey
     public static boolean checkMasterkey(String input) {
+        boolean tru = false;
         for (Entry entry : allEntries) {
+            System.out.println(entry);
             if (entry.title != "masterkey") continue;
-            return entry.password.equals(input);
+            tru = entry.password.equals(input);
         }
-
-        return false;
+        
+        return tru;
     }
 
     // Key generation
@@ -58,7 +60,7 @@ public class Utils {
         KeySpec spec = new PBEKeySpec(masterKey.toCharArray(), salt, 65536, 256);
         SecretKey tmp = factory.generateSecret(spec);
 
-        return new SecretKeySpec(tmp.getEncoded(), "AES/GCM/NoPadding");
+        return new SecretKeySpec(tmp.getEncoded(), "AES");
     }
 
     // Salt *Gotta make it salty

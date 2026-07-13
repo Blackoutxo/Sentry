@@ -1,19 +1,11 @@
 package me.blackout.Sentry;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.swing.*;
-import javax.swing.border.AbstractBorder;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 
 public class Panels extends JFrame {
     // ---------------------------------------------------------------
@@ -34,7 +26,7 @@ public class Panels extends JFrame {
     private final DefaultListModel<Utils.Entry> listModel = new DefaultListModel<>();
     private final JList<Utils.Entry> entryList = new JList<>(listModel);
 
-    private final CardLayout cardDetail = new CardLayout();
+    //private final CardLayout cardDetail = new CardLayout();
 
     // Panel
     public Panels() throws IOException, FontFormatException {
@@ -82,9 +74,9 @@ public class Panels extends JFrame {
         Button addButton = new Button("+  ADD KEYS");
 
         // Button action
-        addButton.addActionListener(e -> {
-            openAddDialog();
-        });
+        addButton.addActionListener(e ->
+            openAddDialog()
+        );
 
         JPanel bottomBar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         bottomBar.setOpaque(false);
