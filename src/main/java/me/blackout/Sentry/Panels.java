@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -171,12 +172,10 @@ public class Panels extends JFrame {
             if (strTitle.isEmpty() || passKey.isEmpty()) return;
 
             try {
-                file.write("\n".getBytes(), file.DATA_FILE);
-                file.save(strTitle + "|" + passKey, Main.masterKey);
+                file.save(strTitle + "|" + passKey);
 
                 dialog.dispose();
-            } catch (IOException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException |
-                     NoSuchPaddingException | InvalidKeySpecException | NoSuchAlgorithmException ex) {
+            } catch (IOException | GeneralSecurityException ex) {
                 throw new RuntimeException(ex);
             }
         });

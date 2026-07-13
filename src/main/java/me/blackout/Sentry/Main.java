@@ -41,6 +41,9 @@ public class Main {
             return;
         }
 
+        // Load file
+        file.load(file.DATA_FILE);
+
         // Pass key
         if (!Utils.checkMasterkey(input)) {
             System.exit(0); // System exit on fail

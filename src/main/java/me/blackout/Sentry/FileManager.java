@@ -23,12 +23,9 @@ public class FileManager {
     /**
      * Create File
      * */
-    public void create() throws IOException, GeneralSecurityException {
+    public void create() throws IOException{
         File file = new File(DATA_FILE);
         File saltyFile = new File(SALT_FILE);
-
-        // Generate key
-        key = Utils.generateKey(Main.input);
 
         // Check for existing file
         if (file.exists() && saltyFile.exists()) return;
@@ -43,16 +40,20 @@ public class FileManager {
      */
     public String read(String file) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line = reader.readLine();
-            reader.close();
-            return line;
+            if (reader.readLine() != null) {
+                String line = reader.readLine();
+                reader.close();
+                return line;
+            }
         }
+        return "";
     }
 
     /**
      * Load the file
      */
     public List<Utils.Entry> load(String file) throws IOException, GeneralSecurityException {
+        key = Utils.generateKey(Main.input);
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -61,7 +62,7 @@ public class FileManager {
                 String[] parts = line.split(",", 2);
                 if (parts.length != 2) continue; // Skip malformed parts
 
-                // Decrypt title & passwords
+                // Decrypt title & password
                 String title = decryptField(parts[0]);
                 String password = decryptField(parts[1]);
 

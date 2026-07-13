@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Utils {
-    public static List<String> cFile = new ArrayList<>();
     public static List<Entry> allEntries = new ArrayList<>();
 
     public static Font spaceGrotesk;
@@ -39,10 +38,9 @@ public class Utils {
 
     // Check masterkey
     public static boolean checkMasterkey(String input) {
-        FileManager file = new FileManager(); // Load file manager
-
         for (Entry entry : allEntries) {
-
+            if (entry.title != "masterkey") continue;
+            return entry.password.equals(input);
         }
 
         return false;
@@ -60,7 +58,7 @@ public class Utils {
         KeySpec spec = new PBEKeySpec(masterKey.toCharArray(), salt, 65536, 256);
         SecretKey tmp = factory.generateSecret(spec);
 
-        return new SecretKeySpec(tmp.getEncoded(), "AES");
+        return new SecretKeySpec(tmp.getEncoded(), "AES/GCM/NoPadding");
     }
 
     // Salt *Gotta make it salty
