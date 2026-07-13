@@ -8,11 +8,9 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.*;
 import java.security.spec.KeySpec;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,13 +37,23 @@ public class Utils {
         frame.setIconImage(icon);
     }
 
+    // Check masterkey
+    public static boolean checkMasterkey(String input) {
+        FileManager file = new FileManager(); // Load file manager
+
+        for (Entry entry : allEntries) {
+
+        }
+
+        return false;
+    }
+
     // Key generation
-    public static Key generateKey(String masterKey) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+    public static Key generateKey(String masterKey) throws GeneralSecurityException, IOException {
         FileManager file = new FileManager();
 
         // Read file
-        String str = file.read("", file.SALT_FILE, false);
-        byte[] salt =  str.getBytes();
+        byte[] salt = Files.readAllBytes(Path.of(file.SALT_FILE));
 
         // Set-up key
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
