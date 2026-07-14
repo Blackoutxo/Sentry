@@ -38,14 +38,10 @@ public class Utils {
 
     // Check masterkey
     public static boolean checkMasterkey(String input) {
-        boolean tru = false;
         for (Entry entry : allEntries) {
-            System.out.println(entry);
-            if (entry.title != "masterkey") continue;
-            tru = entry.password.equals(input);
+            return entry.password.equals(input) && entry.title.equals("masterkey");
         }
-        
-        return tru;
+        return false;
     }
 
     // Key generation
