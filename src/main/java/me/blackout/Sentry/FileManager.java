@@ -4,13 +4,8 @@ import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.*;
-import java.security.spec.InvalidKeySpecException;
 import java.util.*;
-
-import static java.security.CryptoPrimitive.SECURE_RANDOM;
 
 public class FileManager {
     public String DATA_FILE = "Sentry.txt";
@@ -52,41 +47,43 @@ public class FileManager {
     /**
      * Load the file
      */
-    public List<Utils.Entry> load(String file) throws IOException, GeneralSecurityException {
+    public void load(String file) throws IOException, GeneralSecurityException {
         key = Utils.generateKey(Main.input);
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.isBlank()) continue;
 
-                String[] parts = line.split(",", 2);
+                String[] parts = line.split("\\|", 2);
                 if (parts.length != 2) continue; // Skip malformed parts
 
                 // Decrypt title & password
-                String title = decryptField(parts[0]);
-                String password = decryptField(parts[1]);
+                String title = decryptField(parts[0], key);
+                String password = decryptField(parts[1], key);
 
                 // Add to entry
                 Utils.allEntries.add(new Utils.Entry(title, password));
             }
         }
 
-        return Utils.allEntries;
     }
 
     /**
      *  Writing  & Saving
      */
-    public void save(String input) throws GeneralSecurityException, IOException {
+    public void save(String title, String passkey) throws GeneralSecurityException, IOException {
         // Set key
         key = Utils.generateKey(Main.input);
 
         // String into bytes
-        String IPT = encryptField(input);
+        String encryptedTitle = encryptField(title, key);
+        String encryptedPassword = encryptField(passkey, key);
+
+        String line = encryptedTitle + "|" + encryptedPassword;
 
         // Write the input into the save file
-        try (FileWriter writer = new FileWriter(DATA_FILE, true)) { // Make ts to append (I kept overwriting the files as it wasn't append)......Bravo!
-            writer.write(IPT);
+        try (FileWriter writer = new FileWriter(DATA_FILE, true)) { // Made ts to append (I kept overwriting the files as it wasn't append)......Bravo!
+            writer.write(line);
             writer.write(System.lineSeparator());
         }
     }
@@ -100,7 +97,7 @@ public class FileManager {
     /**
      * Encryption & Decryption
      */
-    private String encryptField(String token) throws GeneralSecurityException {
+    private String encryptField(String token, Key key) throws GeneralSecurityException {
         byte[] iv = new byte[12];
         secRandom.nextBytes(iv);
 
@@ -113,11 +110,11 @@ public class FileManager {
         byte[] combined = new byte[iv.length + cipherBytes.length];
         System.arraycopy(iv, 0, combined, 0, iv.length);
         System.arraycopy(cipherBytes, 0, combined, iv.length, cipherBytes.length);
-
+        
         return Base64.getEncoder().encodeToString(combined);
     }
 
-    private String decryptField(String token) throws GeneralSecurityException {
+    private String decryptField(String token, Key key) throws GeneralSecurityException {
         byte[] combined = Base64.getDecoder().decode(token);
 
         byte[] iv = new byte[12];
