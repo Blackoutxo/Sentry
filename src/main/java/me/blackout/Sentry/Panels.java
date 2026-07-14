@@ -164,7 +164,7 @@ public class Panels extends JFrame {
             if (strTitle.isEmpty() || passKey.isEmpty()) return;
 
             try {
-                file.save(strTitle + "|" + passKey);
+                file.save(strTitle, passKey);
 
                 dialog.dispose();
             } catch (IOException | GeneralSecurityException ex) {
