@@ -33,7 +33,7 @@ public class Main {
             file.write(salt, file.SALT_FILE);
 
             // Write password in file
-            file.save("masterkey" + "|" + input);
+            file.save("masterkey", input);
 
             // System exit on success
             System.exit(0);
