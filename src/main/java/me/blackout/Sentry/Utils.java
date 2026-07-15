@@ -14,9 +14,11 @@ import java.security.*;
 import java.security.spec.KeySpec;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Utils {
     public static List<Entry> allEntries = new ArrayList<>();
+    public static final DefaultListModel<Utils.Entry> listModel = new DefaultListModel<>();
 
     public static Font spaceGrotesk;
 
@@ -35,13 +37,27 @@ public class Utils {
         Image icon = Toolkit.getDefaultToolkit().getImage(iconURL);
         frame.setIconImage(icon);
     }
-
+    
     // Check masterkey
     public static boolean checkMasterkey(String input) {
         for (Entry entry : allEntries) {
             return entry.password.equals(input) && entry.title.equals("masterkey");
         }
         return false;
+    }
+
+    // Set in list model
+    public static void setListModel() {
+        for (Entry entry : allEntries) {
+            listModel.addElement(entry);
+        }
+    }
+
+    // Find by title
+    public static Optional<Entry> findByTitle(String title) {
+        return allEntries.stream()
+                .filter(entry -> entry.title().equalsIgnoreCase(title))
+                .findFirst();
     }
 
     // Key generation
