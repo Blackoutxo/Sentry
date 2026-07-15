@@ -6,6 +6,9 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Optional;
+
+import static me.blackout.Sentry.Utils.listModel;
 
 public class Panels extends JFrame {
     // ---------------------------------------------------------------
@@ -20,10 +23,11 @@ public class Panels extends JFrame {
 
     private static final Color PANEL_BG = new Color(52, 50, 50);
     private static final Color SIDEBAR_BG = new Color(43, 103, 178);
+
+    private static final Color CARD_BG = new Color(36, 125, 178);
     private static final Color CARD_BORDER = new Color(255, 255, 255);
 
     // Field vars
-    private final DefaultListModel<Utils.Entry> listModel = new DefaultListModel<>();
     private final JList<Utils.Entry> entryList = new JList<>(listModel);
 
     //private final CardLayout cardDetail = new CardLayout();
@@ -65,9 +69,17 @@ public class Panels extends JFrame {
 
         // Entry card
         entryList.setCellRenderer(new EntryCardRenderer());
+        entryList.setBackground(PANEL_BG);
+        entryList.setFixedCellHeight(32);
+        entryList.setBorder(null);
+        entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        entryList.addListSelectionListener(e -> {
+            // Placeholder
+        });
 
         // Scroll panel
         JScrollPane scroll = new JScrollPane(entryList);
+        scroll.setBorder(null);
         center.add(scroll);
 
         // Button
@@ -163,8 +175,15 @@ public class Panels extends JFrame {
 
             if (strTitle.isEmpty() || passKey.isEmpty()) return;
 
+            Optional<Utils.Entry> option = Utils.findByTitle(strTitle);
+
+            if (option.isPresent()) {
+
+            }
+
             try {
-                file.save(strTitle, passKey);
+
+                file.saveEntries(); // Save file
 
                 dialog.dispose();
             } catch (IOException | GeneralSecurityException ex) {
@@ -218,8 +237,12 @@ public class Panels extends JFrame {
         public Component getListCellRendererComponent(JList<? extends Utils.Entry> list, Utils.Entry entry, int index, boolean isSelected, boolean cellHasFocus) {
 
             title.setText(entry.title());
+            subTitle.setText("\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022");
 
-            return list;
+            setBackground(CARD_BG);
+            setOpaque(true);
+
+            return this;
         }
     }
 
