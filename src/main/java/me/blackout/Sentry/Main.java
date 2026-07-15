@@ -10,20 +10,17 @@ public class Main {
     public static byte[] salt;
 
     public static void main(String[] args) throws IOException, GeneralSecurityException, FontFormatException {
-        Panels panel = new Panels();
-        panel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         // Open file manager
         FileManager file = new FileManager();
 
         // Create file
         file.create();
 
-        // Generate salt once
-        if (file.read(file.SALT_FILE).isEmpty()) salt = Utils.generateSalt();
-
         // Input Box
         input = file.read(file.DATA_FILE).isEmpty() ? JOptionPane.showInputDialog("Set master key") : JOptionPane.showInputDialog("Enter master key");
+
+        // Generate salt once
+        if (file.read(file.SALT_FILE).isEmpty()) salt = Utils.generateSalt();
 
         // Check file & set masterkey for once
         if (file.read(file.DATA_FILE).isEmpty()) {
@@ -52,6 +49,10 @@ public class Main {
 
         // Set the master key
         masterKey = input;
+
+        // Init panel here
+        Panels panel = new Panels();
+        panel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Set Icon for application
         Utils.setIcon(panel);
