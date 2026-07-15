@@ -2,6 +2,7 @@ package me.blackout.Sentry;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
@@ -177,17 +178,31 @@ public class Panels extends JFrame {
 
             Optional<Utils.Entry> option = Utils.findByTitle(strTitle);
 
+            // Check if title is re-used
             if (option.isPresent()) {
+                int choice = JOptionPane.showConfirmDialog(
+                        dialog, "Entry named " + strTitle + " is already in use, do you want to overwrite it?",
+                        "Duplicate Entry", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE
+                );
 
-            }
+                // Check choice made
+                if (choice != JOptionPane.OK_OPTION) return;
 
-            try {
+                // Remove former entry
+                Utils.allEntries.remove(option.get());
+                listModel.removeElement(option.get());
+            } else {
 
-                file.saveEntries(); // Save file
+                try {
+                    Utils.allEntries.add(new Utils.Entry(strTitle, passKey));
+                    listModel.addElement(new Utils.Entry(strTitle, passKey));
 
-                dialog.dispose();
-            } catch (IOException | GeneralSecurityException ex) {
-                throw new RuntimeException(ex);
+                    file.saveEntries(); // Save file
+
+                    dialog.dispose();
+                } catch (IOException | GeneralSecurityException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
 
@@ -240,6 +255,7 @@ public class Panels extends JFrame {
             subTitle.setText("\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022");
 
             setBackground(CARD_BG);
+            setBorder(new LineBorder(CARD_BORDER, 1, true));
             setOpaque(true);
 
             return this;

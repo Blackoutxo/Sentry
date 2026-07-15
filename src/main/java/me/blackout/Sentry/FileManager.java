@@ -90,6 +90,9 @@ public class FileManager {
     }
 
     public void saveEntries() throws IOException, GeneralSecurityException {
+        // Set key
+        key = Utils.generateKey(Main.input);
+
         for (Utils.Entry entry : Utils.allEntries) {
 
             String encryptedTitle = encryptField(entry.title(), key);
