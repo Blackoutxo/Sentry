@@ -66,6 +66,7 @@ public class FileManager {
             }
         }
 
+        Utils.setListModel();
     }
 
     /**
@@ -85,6 +86,21 @@ public class FileManager {
         try (FileWriter writer = new FileWriter(DATA_FILE, true)) { // Made ts to append (I kept overwriting the files as it wasn't append)......Bravo!
             writer.write(line);
             writer.write(System.lineSeparator());
+        }
+    }
+
+    public void saveEntries() throws IOException, GeneralSecurityException {
+        for (Utils.Entry entry : Utils.allEntries) {
+
+            String encryptedTitle = encryptField(entry.title(), key);
+            String encryptedPassword = encryptField(entry.password(), key);
+
+            String line = encryptedTitle + "|" + encryptedPassword;
+
+            try (FileWriter writer = new FileWriter(DATA_FILE, true)) {
+                writer.write(line);
+                writer.write(System.lineSeparator());
+            }
         }
     }
 
