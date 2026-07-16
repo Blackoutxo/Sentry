@@ -90,6 +90,8 @@ public class FileManager {
     }
 
     public void saveEntries() throws IOException, GeneralSecurityException {
+        StringBuilder line = new StringBuilder();
+
         // Set key
         key = Utils.generateKey(Main.masterKey);
 
@@ -98,13 +100,13 @@ public class FileManager {
             String encryptedTitle = encryptField(entry.title(), key);
             String encryptedPassword = encryptField(entry.password(), key);
 
-            String line = encryptedTitle + "|" + encryptedPassword;
-
-            try (FileWriter writer = new FileWriter(DATA_FILE, false)) {
-                writer.write(line);
-                writer.write(System.lineSeparator());
-            }
+            line.append(encryptedTitle).append("|").append(encryptedPassword).append(System.lineSeparator());
         }
+
+        try (FileWriter writer = new FileWriter(DATA_FILE, false)) {
+            writer.write(line.toString());
+        }
+
     }
 
     public void write(byte[] input, String file) throws IOException {
