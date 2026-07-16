@@ -228,11 +228,17 @@ public class Panels extends JFrame {
     static class EntryCardRenderer extends JPanel implements ListCellRenderer<Utils.Entry> {
         private final JLabel title = new JLabel();
         private final JLabel subTitle = new JLabel();
-        //private final JLabel avatar = new JLabel();
+        private final JLabel avatar = new JLabel();
 
         EntryCardRenderer() {
             setLayout(new BorderLayout(12, 0));
             setOpaque(false);
+
+            avatar.setOpaque(false);
+            avatar.setForeground(Color.WHITE);
+            avatar.setSize(new Dimension(38, 38));
+            avatar.setHorizontalAlignment(SwingConstants.HORIZONTAL);
+            avatar.setFont(Utils.spaceGrotesk.deriveFont(Font.BOLD, 30f));
 
             JPanel textPanel = new JPanel();
             textPanel.setOpaque(false);
@@ -244,17 +250,28 @@ public class Panels extends JFrame {
             subTitle.setFont(Utils.spaceGrotesk.deriveFont(12f));
             subTitle.setForeground(TEXT_MUTED);
 
+            textPanel.add(avatar);
             textPanel.add(title);
             textPanel.add(subTitle);
 
+            add(wrapAvatar(), BorderLayout.WEST);
             add(textPanel, BorderLayout.CENTER);
         }
 
+        private JPanel wrapAvatar() {
+            JPanel pnl = new JPanel();
+            pnl.setOpaque(false);
+            pnl.setBorder(new EmptyBorder(0, 0, 0, 0));
+            pnl.add(avatar, BorderLayout.CENTER);
+            return pnl;
+        }
+
+
         @Override
         public Component getListCellRendererComponent(JList<? extends Utils.Entry> list, Utils.Entry entry, int index, boolean isSelected, boolean cellHasFocus) {
-
-            title.setText(entry.title().toUpperCase());
-            subTitle.setText("lmao");
+            avatar.setText(entry.title().substring(0, 1).toUpperCase());
+            title.setText(entry.title());
+            //subTitle.setText("lmao");
 
             setBackground(isSelected ? CARD_HOVER : CARD_BG);
             setBorder(new LineBorder(CARD_BORDER, 1, true));
