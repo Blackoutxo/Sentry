@@ -25,7 +25,8 @@ public class Panels extends JFrame {
     private static final Color PANEL_BG = new Color(52, 50, 50);
     private static final Color SIDEBAR_BG = new Color(43, 103, 178);
 
-    private static final Color CARD_BG = new Color(36, 125, 178);
+    private static final Color CARD_BG = new Color(43, 103, 178);
+    private static final Color CARD_HOVER = new Color(38, 90, 154);
     private static final Color CARD_BORDER = new Color(255, 255, 255);
 
     // Field vars
@@ -189,18 +190,15 @@ public class Panels extends JFrame {
                 if (choice != JOptionPane.OK_OPTION) return;
 
                 // Remove former entry
+                System.out.println(option.get());
                 Utils.allEntries.remove(option.get());
                 listModel.removeElement(option.get());
-
-                if (strTitle.equals("masterkey")) {
-                    Main.masterKey = passKey;
-                }
             }
 
-            Utils.allEntries.add(new Utils.Entry(strTitle, passKey));
-            listModel.addElement(new Utils.Entry(strTitle, passKey));
-
             try {
+
+                Utils.allEntries.add(new Utils.Entry(strTitle, passKey));
+                listModel.addElement(new Utils.Entry(strTitle, passKey));
 
                 file.saveEntries(); // Save file
                 dialog.dispose();
@@ -255,10 +253,10 @@ public class Panels extends JFrame {
         @Override
         public Component getListCellRendererComponent(JList<? extends Utils.Entry> list, Utils.Entry entry, int index, boolean isSelected, boolean cellHasFocus) {
 
-            title.setText(entry.title());
-            subTitle.setText("\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022");
+            title.setText(entry.title().toUpperCase());
+            subTitle.setText("lmao");
 
-            setBackground(CARD_BG);
+            setBackground(isSelected ? CARD_HOVER : CARD_BG);
             setBorder(new LineBorder(CARD_BORDER, 1, true));
             setOpaque(true);
 
