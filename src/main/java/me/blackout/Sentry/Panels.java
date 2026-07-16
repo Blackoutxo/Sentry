@@ -191,18 +191,22 @@ public class Panels extends JFrame {
                 // Remove former entry
                 Utils.allEntries.remove(option.get());
                 listModel.removeElement(option.get());
-            } else {
 
-                try {
-                    Utils.allEntries.add(new Utils.Entry(strTitle, passKey));
-                    listModel.addElement(new Utils.Entry(strTitle, passKey));
-
-                    file.saveEntries(); // Save file
-
-                    dialog.dispose();
-                } catch (IOException | GeneralSecurityException ex) {
-                    throw new RuntimeException(ex);
+                if (strTitle.equals("masterkey")) {
+                    Main.masterKey = passKey;
                 }
+            }
+
+            Utils.allEntries.add(new Utils.Entry(strTitle, passKey));
+            listModel.addElement(new Utils.Entry(strTitle, passKey));
+
+            try {
+
+                file.saveEntries(); // Save file
+                dialog.dispose();
+
+            } catch (IOException | GeneralSecurityException ex) {
+                throw new RuntimeException(ex);
             }
         });
 
