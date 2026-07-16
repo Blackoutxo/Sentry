@@ -42,15 +42,15 @@ public class Main {
 
         // Set the master key
         masterKey = input;
-                                 // Triple fold protection lol
+
         // Load file
         file.load(file.DATA_FILE);
 
         // Pass key
-        if (!Utils.checkMasterkey(input)) {
+        /*if (!Utils.checkMasterkey(input)) {
             System.exit(0); // System exit on fail
             return;
-        }
+        }*/
 
         // Init panel here
         Panels panel = new Panels();
