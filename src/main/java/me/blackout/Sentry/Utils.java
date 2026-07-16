@@ -46,6 +46,11 @@ public class Utils {
         return false;
     }
 
+    public static boolean keyExists() {
+        Optional<Entry> t = Utils.findByTitle("masterkey");
+        return t.isPresent();
+    }
+
     // Set in list model
     public static void setListModel() {
         for (Entry entry : allEntries) {
