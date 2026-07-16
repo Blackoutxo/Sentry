@@ -48,7 +48,7 @@ public class FileManager {
      * Load the file
      */
     public void load(String file) throws IOException, GeneralSecurityException {
-        key = Utils.generateKey(Main.input);
+        key = Utils.generateKey(Main.masterKey);
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -72,9 +72,9 @@ public class FileManager {
     /**
      *  Writing  & Saving
      */
-    public void save(String title, String passkey) throws GeneralSecurityException, IOException {
+    public void save(String title, String passkey, boolean append) throws GeneralSecurityException, IOException {
         // Set key
-        key = Utils.generateKey(Main.input);
+        key = Utils.generateKey(Main.masterKey);
 
         // String into bytes
         String encryptedTitle = encryptField(title, key);
@@ -83,7 +83,7 @@ public class FileManager {
         String line = encryptedTitle + "|" + encryptedPassword;
 
         // Write the input into the save file
-        try (FileWriter writer = new FileWriter(DATA_FILE, true)) { // Made ts to append (I kept overwriting the files as it wasn't append)......Bravo!
+        try (FileWriter writer = new FileWriter(DATA_FILE, append)) { // Made ts to append (I kept overwriting the files as it wasn't append)......Bravo!
             writer.write(line);
             writer.write(System.lineSeparator());
         }
@@ -91,7 +91,7 @@ public class FileManager {
 
     public void saveEntries() throws IOException, GeneralSecurityException {
         // Set key
-        key = Utils.generateKey(Main.input);
+        key = Utils.generateKey(Main.masterKey);
 
         for (Utils.Entry entry : Utils.allEntries) {
 
@@ -100,7 +100,7 @@ public class FileManager {
 
             String line = encryptedTitle + "|" + encryptedPassword;
 
-            try (FileWriter writer = new FileWriter(DATA_FILE, true)) {
+            try (FileWriter writer = new FileWriter(DATA_FILE, false)) {
                 writer.write(line);
                 writer.write(System.lineSeparator());
             }
