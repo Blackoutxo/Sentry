@@ -20,17 +20,19 @@ public class Main {
         input = file.read(file.DATA_FILE).isEmpty() ? JOptionPane.showInputDialog("Set master key") : JOptionPane.showInputDialog("Enter master key");
 
         // Generate salt once
-        if (file.read(file.SALT_FILE).isEmpty()) salt = Utils.generateSalt();
+        if (file.read(file.SALT_FILE).isEmpty()) {
+            salt = Utils.generateSalt();
+
+            // Save the seasoning
+            file.write(salt, file.SALT_FILE);
+        }
 
         // Check file & set masterkey for once
         if (file.read(file.DATA_FILE).isEmpty()) {
             masterKey = input;
 
-            // Save the seasoning
-            file.write(salt, file.SALT_FILE);
-
             // Write password in file
-            file.save("masterkey", input);
+            file.save("masterkey", input, true);
 
             // System exit on success
             System.exit(0);
@@ -38,6 +40,9 @@ public class Main {
             return;
         }
 
+        // Set the master key
+        masterKey = input;
+                                 // Triple fold protection lol
         // Load file
         file.load(file.DATA_FILE);
 
@@ -46,9 +51,6 @@ public class Main {
             System.exit(0); // System exit on fail
             return;
         }
-
-        // Set the master key
-        masterKey = input;
 
         // Init panel here
         Panels panel = new Panels();
