@@ -72,7 +72,7 @@ public class Panels extends JFrame {
         // Entry card
         entryList.setCellRenderer(new EntryCardRenderer());
         entryList.setBackground(PANEL_BG);
-        entryList.setFixedCellHeight(32);
+        entryList.setFixedCellHeight(48);
         entryList.setBorder(null);
         entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         entryList.addListSelectionListener(e -> {
@@ -227,7 +227,6 @@ public class Panels extends JFrame {
     // Cell renderer
     static class EntryCardRenderer extends JPanel implements ListCellRenderer<Utils.Entry> {
         private final JLabel title = new JLabel();
-        private final JLabel subTitle = new JLabel();
         private final JLabel avatar = new JLabel();
 
         EntryCardRenderer() {
@@ -235,25 +234,22 @@ public class Panels extends JFrame {
             setBorder(new EmptyBorder(6, 4, 6, 4));
             setOpaque(false);
 
-            avatar.setOpaque(false);
-            avatar.setForeground(Color.WHITE);
-            avatar.setSize(new Dimension(38, 38));
-            avatar.setHorizontalAlignment(SwingConstants.HORIZONTAL);
-            avatar.setFont(Utils.spaceGrotesk.deriveFont(Font.BOLD, 30f));
-
             JPanel textPanel = new JPanel();
             textPanel.setOpaque(false);
             textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
 
             title.setFont(Utils.spaceGrotesk.deriveFont(Font.BOLD, 14f));
+            title.setAlignmentY(SwingConstants.CENTER);
             title.setForeground(TEXT);
 
-            subTitle.setFont(Utils.spaceGrotesk.deriveFont(12f));
-            subTitle.setForeground(TEXT_MUTED);
+            avatar.setOpaque(false);
+            avatar.setForeground(Color.WHITE);
+            avatar.setSize(new Dimension(38, 38));
+            avatar.setHorizontalAlignment(SwingConstants.HORIZONTAL);
+            avatar.setFont(Utils.spaceGrotesk.deriveFont(Font.BOLD, 15f));
 
             textPanel.add(avatar);
             textPanel.add(title);
-            textPanel.add(subTitle);
 
             add(wrapAvatar(), BorderLayout.WEST);
             add(textPanel, BorderLayout.CENTER);
@@ -267,18 +263,24 @@ public class Panels extends JFrame {
             return pnl;
         }
 
-
         @Override
         public Component getListCellRendererComponent(JList<? extends Utils.Entry> list, Utils.Entry entry, int index, boolean isSelected, boolean cellHasFocus) {
-            avatar.setText(entry.title().substring(0, 1).toUpperCase());
-            avatar.setBackground(color(entry.title()));
             title.setText(entry.title());
 
-            setBackground(isSelected ? CARD_HOVER : CARD_BG);
-            setBorder(new LineBorder(CARD_BORDER, 5, new EmptyBorder(0, 0, 0, 0)));
-            setOpaque(true);
+            avatar.setText(entry.title().substring(0, 1).toUpperCase());
+            avatar.setBackground(color(entry.title()));
 
-            return this;
+            JPanel card = new JPanel(new BorderLayout());
+            card.setOpaque(false);
+            card.setBorder(new LineBorder(CARD_BORDER, 5, new EmptyBorder(0, 0, 0, 0)));
+            card.setBackground(isSelected ? CARD_HOVER : CARD_BG);
+            card.add(this, BorderLayout.CENTER);
+
+            JPanel outer = new JPanel(new BorderLayout());
+            outer.setOpaque(false);
+            outer.add(card, BorderLayout.CENTER);
+
+            return outer;
         }
 
         private Color color(String seed) {
