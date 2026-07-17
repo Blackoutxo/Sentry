@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
 
+import static me.blackout.Sentry.Utils.allEntries;
 import static me.blackout.Sentry.Utils.listModel;
 
 public class Panels extends JFrame {
@@ -31,6 +32,7 @@ public class Panels extends JFrame {
 
     // Field vars
     private final JList<Utils.Entry> entryList = new JList<>(listModel);
+    private Utils.Entry selected;
 
     //private final CardLayout cardDetail = new CardLayout();
 
@@ -73,10 +75,10 @@ public class Panels extends JFrame {
         entryList.setCellRenderer(new EntryCardRenderer());
         entryList.setBackground(PANEL_BG);
         entryList.setFixedCellHeight(48);
-        entryList.setBorder(null);
         entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         entryList.addListSelectionListener(e -> {
-            // Placeholder
+            selected = entryList.getSelectedValue();
+            if (!e.getValueIsAdjusting()) openDetailDialog();
         });
 
         // Scroll panel
@@ -191,13 +193,12 @@ public class Panels extends JFrame {
 
                 // Remove former entry
                 System.out.println(option.get());
-                Utils.allEntries.remove(option.get());
+                allEntries.remove(option.get());
                 listModel.removeElement(option.get());
             }
 
             try {
-
-                Utils.allEntries.add(new Utils.Entry(strTitle, passKey));
+                allEntries.add(new Utils.Entry(strTitle, passKey));
                 listModel.addElement(new Utils.Entry(strTitle, passKey));
 
                 file.saveEntries(); // Save file
@@ -218,6 +219,97 @@ public class Panels extends JFrame {
         dialog.setLocationRelativeTo(this);
         dialog.setResizable(false);
         dialog.setVisible(true);
+    }
+
+    private void openDetailDialog() {
+        JDialog dialog = new JDialog(this, "Detail", true);
+        JPanel form = new JPanel(new GridBagLayout());
+
+        //Utils.Entry entry = entryList.getSelectedValue();
+
+        dialog.setBackground(PANEL_BG);
+        form.setBackground(PANEL_BG);
+
+        // Layout constraints
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+        // Title
+        JLabel titleL = new JLabel("TITLE");
+        JTextField title = new TextField(selected.title());
+
+        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0; // For title label
+        titleL.setFont(Utils.spaceGrotesk.deriveFont(14f));
+        titleL.setForeground(TEXT);
+        form.add(titleL, gbc);
+
+        gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = 1; // For title text field
+        form.add(title, gbc);
+
+        // Passkey
+        JLabel passL = new JLabel("PASSWORD");
+        JTextField password = new TextField("•••••••••••");
+
+        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
+        passL.setFont(Utils.spaceGrotesk.deriveFont(14f));
+        passL.setForeground(TEXT);
+        form.add(passL, gbc);
+
+        gbc.gridx = 1; gbc.gridy = 1; gbc.weightx = 1;
+        form.add(password, gbc);
+
+        dialog.add(form, BorderLayout.CENTER);
+
+        // Button
+        JPanel buttonBar = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 8));
+        buttonBar.setBackground(PANEL_BG);
+        buttonBar.setBorder(new EmptyBorder(0, 0, 16, 0));
+
+        // Cancel button
+        Button delete = new Button("DELETE");
+
+        delete.addActionListener(e -> {
+            try {
+                deleteEntry(entryList.getSelectedValue());
+                dialog.dispose();
+            } catch (GeneralSecurityException | IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        // Save button
+        Button show = new Button("SHOW");
+
+        show.addActionListener(e -> {
+            password.setText(selected.password());
+        });
+
+        // Add to button bar
+        buttonBar.add(delete);
+        buttonBar.add(show);
+        dialog.add(buttonBar, BorderLayout.SOUTH);
+
+        // Pack dialog box
+        dialog.pack();
+        dialog.setSize(Math.max(dialog.getWidth(), 380), dialog.getHeight());
+        dialog.setLocationRelativeTo(this);
+        dialog.setResizable(false);
+        dialog.setVisible(true);
+    }
+
+    // Delete selected
+    private void deleteEntry(Utils.Entry entry) throws GeneralSecurityException, IOException {
+        // Confirm dialog panel
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Delete \"" + entry.title() + "\"?", "Confirm delete",
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            allEntries.remove(entry);
+            listModel.removeElement(entry);
+            new FileManager().saveEntries();
+        }
     }
 
     // ---------------------------------------------------------------
