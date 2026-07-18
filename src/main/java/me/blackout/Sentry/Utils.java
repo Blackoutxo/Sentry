@@ -3,8 +3,12 @@ package me.blackout.Sentry;
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -29,15 +33,21 @@ public class Utils {
     }
 
     // Icon
-    public static void setIcon(JFrame frame) {
-        URL iconURL = Main.class.getResource("/Sentry.png");
+    public static void setIcon(JFrame frame) throws IOException {
+        URL iconURL = Main.class.getResource("/sentry.png");
+        if (iconURL == null) return;
 
-        if (iconURL == null)  return;
+        BufferedImage original = ImageIO.read(iconURL);
 
-        Image icon = Toolkit.getDefaultToolkit().getImage(iconURL);
-        frame.setIconImage(icon);
+        List<Image> icons = new ArrayList<>();
+        int[] sizes = {16, 20, 24, 32, 40, 48, 64, 128, 256};
+        for (int size : sizes) {
+            icons.add(original.getScaledInstance(size, size, Image.SCALE_SMOOTH));
+        }
+
+        frame.setIconImages(icons);
     }
-    
+
     // Check masterkey
     public static boolean checkMasterkey(String input) {
         for (Entry entry : allEntries) {
