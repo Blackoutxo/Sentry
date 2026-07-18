@@ -27,30 +27,12 @@ public class Main {
             file.write(salt, file.SALT_FILE);
         }
 
-        // Check file & set masterkey for once
-        if (file.read(file.DATA_FILE).isEmpty()) {
-            masterKey = input;
-
-            // Write password in file
-            file.save("masterkey", input, true);
-
-            // System exit on success
-            System.exit(0);
-
-            return;
-        }
-
         // Set the master key
         masterKey = input;
 
         // Load file
         file.load(file.DATA_FILE);
 
-        // Pass key
-        /*if (!Utils.checkMasterkey(input)) {
-            System.exit(0); // System exit on fail
-            return;
-        }*/
 
         // Init panel here
         Panels panel = new Panels();
