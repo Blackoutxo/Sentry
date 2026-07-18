@@ -32,7 +32,6 @@ public class Panels extends JFrame {
 
     // Field vars
     private final JList<Utils.Entry> entryList = new JList<>(listModel);
-    private Utils.Entry selected;
 
     //private final CardLayout cardDetail = new CardLayout();
 
@@ -74,10 +73,9 @@ public class Panels extends JFrame {
         // Entry card
         entryList.setCellRenderer(new EntryCardRenderer());
         entryList.setBackground(PANEL_BG);
-        entryList.setFixedCellHeight(48);
+        entryList.setFixedCellHeight(64);
         entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         entryList.addListSelectionListener(e -> {
-            selected = entryList.getSelectedValue();
             if (!e.getValueIsAdjusting()) openDetailDialog();
         });
 
@@ -225,7 +223,7 @@ public class Panels extends JFrame {
         JDialog dialog = new JDialog(this, "Detail", true);
         JPanel form = new JPanel(new GridBagLayout());
 
-        //Utils.Entry entry = entryList.getSelectedValue();
+        Utils.Entry entry = entryList.getSelectedValue();
 
         dialog.setBackground(PANEL_BG);
         form.setBackground(PANEL_BG);
@@ -237,7 +235,7 @@ public class Panels extends JFrame {
 
         // Title
         JLabel titleL = new JLabel("TITLE");
-        JTextField title = new TextField(selected.title());
+        JTextField title = new TextField(entry.title());
 
         gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0; // For title label
         titleL.setFont(Utils.spaceGrotesk.deriveFont(14f));
@@ -251,12 +249,12 @@ public class Panels extends JFrame {
         JLabel passL = new JLabel("PASSWORD");
         JTextField password = new TextField("•••••••••••");
 
-        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
+        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0; // For passkey label
         passL.setFont(Utils.spaceGrotesk.deriveFont(14f));
         passL.setForeground(TEXT);
         form.add(passL, gbc);
 
-        gbc.gridx = 1; gbc.gridy = 1; gbc.weightx = 1;
+        gbc.gridx = 1; gbc.gridy = 1; gbc.weightx = 1; // For passkey text field
         form.add(password, gbc);
 
         dialog.add(form, BorderLayout.CENTER);
@@ -281,8 +279,15 @@ public class Panels extends JFrame {
         // Save button
         Button show = new Button("SHOW");
 
+        final int[] ps = {0};
         show.addActionListener(e -> {
-            password.setText(selected.password());
+            if (ps[0] == 0) {
+                password.setText(entry.password());
+                ps[0] += 1;
+            } else {
+                password.setText("•••••••••••");
+                ps[0] = 0;
+            }
         });
 
         // Add to button bar
@@ -322,7 +327,7 @@ public class Panels extends JFrame {
         private final JLabel avatar = new JLabel();
 
         EntryCardRenderer() {
-            setLayout(new BorderLayout(12, 0));
+            setLayout(new BorderLayout(15, 0));
             setBorder(new EmptyBorder(6, 4, 6, 4));
             setOpaque(false);
 
@@ -370,6 +375,7 @@ public class Panels extends JFrame {
 
             JPanel outer = new JPanel(new BorderLayout());
             outer.setOpaque(false);
+            outer.setBorder(new EmptyBorder(4, 0, 4, 0));
             outer.add(card, BorderLayout.CENTER);
 
             return outer;
