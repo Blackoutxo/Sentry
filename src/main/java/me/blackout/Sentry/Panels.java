@@ -21,7 +21,7 @@ public class Panels extends JFrame {
     private static final Color BUTTON_HOVER = new Color(39, 134, 192);
 
     private static final Color TEXT = new Color(253, 253, 253);
-    private static final Color TEXT_MUTED = new Color(138, 136, 158);
+    //private static final Color TEXT_MUTED = new Color(138, 136, 158);
 
     private static final Color PANEL_BG = new Color(52, 50, 50);
     private static final Color SIDEBAR_BG = new Color(43, 103, 178);
@@ -76,7 +76,9 @@ public class Panels extends JFrame {
         entryList.setFixedCellHeight(64);
         entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         entryList.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) openDetailDialog();
+            if (!e.getValueIsAdjusting() && entryList.getSelectedValue() != null) {
+                openDetailDialog();
+            }
         });
 
         // Scroll panel
@@ -190,7 +192,6 @@ public class Panels extends JFrame {
                 if (choice != JOptionPane.OK_OPTION) return;
 
                 // Remove former entry
-                System.out.println(option.get());
                 allEntries.remove(option.get());
                 listModel.removeElement(option.get());
             }
@@ -269,7 +270,7 @@ public class Panels extends JFrame {
 
         delete.addActionListener(e -> {
             try {
-                deleteEntry(entryList.getSelectedValue());
+                deleteEntry(entry);
                 dialog.dispose();
             } catch (GeneralSecurityException | IOException ex) {
                 throw new RuntimeException(ex);
