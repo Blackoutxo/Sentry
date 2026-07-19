@@ -1,4 +1,8 @@
-package me.blackout.Sentry;
+package me.blackout.Sentry.utils.file;
+
+import me.blackout.Sentry.Main;
+import me.blackout.Sentry.Sentry;
+import me.blackout.Sentry.utils.Utils;
 
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
@@ -48,7 +52,7 @@ public class FileManager {
      * Load the file
      */
     public void load(String file) throws IOException, GeneralSecurityException {
-        key = Utils.generateKey(Main.masterKey);
+        key = Utils.generateKey(Sentry.masterKey);
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -74,7 +78,7 @@ public class FileManager {
      */
     public void save(String title, String passkey, boolean append) throws GeneralSecurityException, IOException {
         // Set key
-        key = Utils.generateKey(Main.masterKey);
+        key = Utils.generateKey(Sentry.masterKey);
 
         // String into bytes
         String encryptedTitle = encryptField(title, key);
@@ -93,7 +97,7 @@ public class FileManager {
         StringBuilder line = new StringBuilder();
 
         // Set key
-        key = Utils.generateKey(Main.masterKey);
+        key = Utils.generateKey(Sentry.masterKey);
 
         for (Utils.Entry entry : Utils.allEntries) {
 

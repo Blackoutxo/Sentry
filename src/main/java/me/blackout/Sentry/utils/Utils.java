@@ -1,4 +1,7 @@
-package me.blackout.Sentry;
+package me.blackout.Sentry.utils;
+
+import me.blackout.Sentry.Main;
+import me.blackout.Sentry.utils.file.FileManager;
 
 import javax.crypto.*;
 import javax.crypto.spec.PBEKeySpec;
@@ -7,8 +10,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;

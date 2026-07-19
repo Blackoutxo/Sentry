@@ -1,18 +1,21 @@
-package me.blackout.Sentry;
+package me.blackout.Sentry.ui;
+
+import me.blackout.Sentry.ui.elements.CardRenderer;
+import me.blackout.Sentry.utils.file.FileManager;
+import me.blackout.Sentry.utils.Utils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
 
-import static me.blackout.Sentry.Utils.allEntries;
-import static me.blackout.Sentry.Utils.listModel;
+import static me.blackout.Sentry.utils.Utils.allEntries;
+import static me.blackout.Sentry.utils.Utils.listModel;
 
-public class Panels extends JFrame {
+public class Panel extends JFrame {
     // ---------------------------------------------------------------
     //                          Color palette
     // ---------------------------------------------------------------
@@ -36,7 +39,7 @@ public class Panels extends JFrame {
     //private final CardLayout cardDetail = new CardLayout();
 
     // Panel
-    public Panels() throws IOException, FontFormatException {
+    public Panel() throws IOException, FontFormatException {
         super("Sentry");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(980, 600);
@@ -71,7 +74,7 @@ public class Panels extends JFrame {
         center.add(top, BorderLayout.NORTH);
 
         // Entry card
-        entryList.setCellRenderer(new EntryCardRenderer());
+        entryList.setCellRenderer(new CardRenderer(TEXT, PANEL_BG, CARD_HOVER, CARD_BORDER));
         entryList.setBackground(PANEL_BG);
         entryList.setFixedCellHeight(64);
         entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -248,7 +251,7 @@ public class Panels extends JFrame {
 
         // Passkey
         JLabel passL = new JLabel("PASSWORD");
-        JTextField password = new TextField("•••••••••••");
+        JPasswordField password = new PasswordField();
 
         gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0; // For passkey label
         passL.setFont(Utils.spaceGrotesk.deriveFont(14f));
@@ -286,7 +289,7 @@ public class Panels extends JFrame {
                 password.setText(entry.password());
                 ps[0] += 1;
             } else {
-                password.setText("•••••••••••");
+                password.setText(".....");
                 ps[0] = 0;
             }
         });
@@ -322,84 +325,12 @@ public class Panels extends JFrame {
     //  J-Elements modification
     // ---------------------------------------------------------------
 
-    // Cell renderer
-    static class EntryCardRenderer extends JPanel implements ListCellRenderer<Utils.Entry> {
-        private final JLabel title = new JLabel();
-        private final JLabel avatar = new JLabel();
-
-        EntryCardRenderer() {
-            setLayout(new BorderLayout(15, 0));
-            setBorder(new EmptyBorder(6, 4, 6, 4));
-            setOpaque(false);
-
-            JPanel textPanel = new JPanel();
-            textPanel.setOpaque(false);
-            textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
-
-            title.setFont(Utils.spaceGrotesk.deriveFont(Font.BOLD, 14f));
-            title.setAlignmentY(SwingConstants.CENTER);
-            title.setForeground(TEXT);
-
-            avatar.setOpaque(false);
-            avatar.setForeground(Color.WHITE);
-            avatar.setSize(new Dimension(38, 38));
-            avatar.setHorizontalAlignment(SwingConstants.HORIZONTAL);
-            avatar.setFont(Utils.spaceGrotesk.deriveFont(Font.BOLD, 15f));
-
-            textPanel.add(avatar);
-            textPanel.add(title);
-
-            add(wrapAvatar(), BorderLayout.WEST);
-            add(textPanel, BorderLayout.CENTER);
-        }
-
-        private JPanel wrapAvatar() {
-            JPanel pnl = new JPanel();
-            pnl.setOpaque(false);
-            pnl.setBorder(new EmptyBorder(0, 8, 0, 0));
-            pnl.add(avatar, BorderLayout.CENTER);
-            return pnl;
-        }
-
-        @Override
-        public Component getListCellRendererComponent(JList<? extends Utils.Entry> list, Utils.Entry entry, int index, boolean isSelected, boolean cellHasFocus) {
-            title.setText(entry.title());
-
-            avatar.setText(entry.title().substring(0, 1).toUpperCase());
-            avatar.setBackground(color(entry.title()));
-
-            JPanel card = new JPanel(new BorderLayout());
-            card.setOpaque(false);
-            card.setBorder(new LineBorder(CARD_BORDER, 5, new EmptyBorder(0, 0, 0, 0)));
-            card.setBackground(isSelected ? CARD_HOVER : CARD_BG);
-            card.add(this, BorderLayout.CENTER);
-
-            JPanel outer = new JPanel(new BorderLayout());
-            outer.setOpaque(false);
-            outer.setBorder(new EmptyBorder(4, 0, 4, 0));
-            outer.add(card, BorderLayout.CENTER);
-
-            return outer;
-        }
-
-        private Color color(String seed) {
-            int hash = Math.abs(seed.hashCode());
-            Color[] palette = {
-                    new Color(39, 134, 192), new Color(162, 37, 37),
-                    new Color(67, 178, 36), new Color(192, 167, 39),
-                    new Color(89, 32, 234), new Color(37, 47, 162)
-            };
-            return palette[hash % palette.length];
-        }
-    }
-
-    // Buttons
-    static class Button extends JButton {
+    class Button extends JButton {
         public static int ARC = 12;
 
         Button(String text) {
             super(text);
-            setForeground(Color.WHITE);
+            setForeground(TEXT);
             setFont(Utils.spaceGrotesk.deriveFont(Font.BOLD, 13f));
             setFocusPainted(false);
             setContentAreaFilled(false);
@@ -414,9 +345,9 @@ public class Panels extends JFrame {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            Color fill = getModel().isPressed() ? BUTTON_PRESS
-                    : getModel().isRollover() ? BUTTON_HOVER
-                    : BUTTON;
+            Color fill = getModel().isPressed() ? CARD_HOVER
+                    : getModel().isRollover() ? CARD_HOVER
+                    : CARD_BG;
 
             g2.setColor(fill);
             g2.fill(new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, ARC, ARC));
@@ -429,11 +360,10 @@ public class Panels extends JFrame {
         protected void paintBorder(Graphics g) {/*  No borders */ }
     }
 
-    // Text field
-    static class TextField extends JTextField {
+    class TextField extends JTextField {
         private final String placeholder;
 
-        TextField(String placeholder) {
+        public TextField(String placeholder) {
             this.placeholder = placeholder;
             setOpaque(false);
             setBorder(new EmptyBorder(8, 14, 8, 14));
@@ -468,34 +398,6 @@ public class Panels extends JFrame {
                 pg.drawString(placeholder, getInsets().left + 10, (getHeight() + fm.getAscent() - fm.getDescent()) / 2);
                 pg.dispose();
             }
-        }
-    }
-
-    // Line border
-    static class LineBorder extends javax.swing.border.AbstractBorder {
-        private final Color color;
-        private final int radius;
-        private final EmptyBorder padding;
-
-        LineBorder(Color color, int radius, EmptyBorder padding) {
-            this.color = color;
-            this.radius = radius;
-            this.padding = padding;
-        }
-
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            Graphics2D g2 = (Graphics2D) g.create();
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setColor(color);
-            g2.draw(new RoundRectangle2D.Float(x, y, width - 1, height - 1, radius, radius));
-            g2.dispose();
-        }
-
-        @Override
-        public Insets getBorderInsets(Component c) {
-            Insets p = padding.getBorderInsets(c);
-            return new Insets(p.top + 4, p.left + 4, p.bottom + 4, p.right + 4);
         }
     }
 
