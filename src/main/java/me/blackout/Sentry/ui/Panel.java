@@ -1,14 +1,18 @@
 package me.blackout.Sentry.ui;
 
+import me.blackout.Sentry.Main;
 import me.blackout.Sentry.ui.elements.CardRenderer;
 import me.blackout.Sentry.utils.file.FileManager;
 import me.blackout.Sentry.utils.Utils;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
 
@@ -19,15 +23,15 @@ public class Panel extends JFrame {
     // ---------------------------------------------------------------
     //                          Color palette
     // ---------------------------------------------------------------
-    private static final Color BUTTON = new Color(32, 157, 234);
-    private static final Color BUTTON_PRESS = new Color(39, 134, 192);
-    private static final Color BUTTON_HOVER = new Color(39, 134, 192);
+    private static final Color BUTTON = new Color(93, 109, 201);
+    private static final Color BUTTON_PRESS = new Color(79, 92, 171);
+    private static final Color BUTTON_HOVER = new Color(83, 97, 182);
 
     private static final Color TEXT = new Color(253, 253, 253);
     //private static final Color TEXT_MUTED = new Color(138, 136, 158);
 
-    private static final Color PANEL_BG = new Color(52, 50, 50);
-    private static final Color SIDEBAR_BG = new Color(43, 103, 178);
+    private static final Color PANEL_BG = new Color(0x1C, 0x1B, 0x1F);
+    private static final Color SIDEBAR_BG = new Color(93, 109, 201);
 
     private static final Color CARD_BG = new Color(43, 103, 178);
     private static final Color CARD_HOVER = new Color(38, 90, 154);
@@ -35,8 +39,6 @@ public class Panel extends JFrame {
 
     // Field vars
     private final JList<Utils.Entry> entryList = new JList<>(listModel);
-
-    //private final CardLayout cardDetail = new CardLayout();
 
     // Panel
     public Panel() throws IOException, FontFormatException {
@@ -74,7 +76,7 @@ public class Panel extends JFrame {
         center.add(top, BorderLayout.NORTH);
 
         // Entry card
-        entryList.setCellRenderer(new CardRenderer(TEXT, PANEL_BG, CARD_HOVER, CARD_BORDER));
+        entryList.setCellRenderer(new CardRenderer(TEXT, CARD_BG, CARD_HOVER, CARD_BORDER));
         entryList.setBackground(PANEL_BG);
         entryList.setFixedCellHeight(64);
         entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -90,7 +92,7 @@ public class Panel extends JFrame {
         center.add(scroll);
 
         // Button
-        Button addButton = new Button("+  ADD KEYS");
+        Button addButton = new Button("+  ADD KEYS", TEXT);
 
         // Button action
         addButton.addActionListener(e ->
@@ -106,15 +108,77 @@ public class Panel extends JFrame {
         return center;
     }
 
-    public JPanel sidePanel() {
+    public JPanel sidePanel() throws IOException {
         JPanel sideBar = new JPanel();
 
         // Set layout
         sideBar.setLayout(new BoxLayout(sideBar, BoxLayout.Y_AXIS));
         sideBar.setBackground(SIDEBAR_BG);
         sideBar.setPreferredSize(new Dimension(220, 0));
-        sideBar.setBorder(new EmptyBorder(24, 20, 24, 20));
+        sideBar.setBorder(new EmptyBorder(24, 0, 0, 0));
 
+        // Logo
+        JLabel logoLabel = new JLabel("SENTRY");
+        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        logoLabel.setBorder(new EmptyBorder(0, 0, 20, 30));
+
+        logoLabel.setForeground(Color.BLACK);
+        logoLabel.setFont(Utils.spaceGrotesk.deriveFont(Font.BOLD, 30f));
+
+        URL iconURL = Main.class.getResource("/Sentry.png");
+        if (iconURL != null) {
+            BufferedImage original = ImageIO.read(iconURL);
+            Image scaled = original.getScaledInstance(48, 48, Image.SCALE_SMOOTH);
+            logoLabel.setIcon(new ImageIcon(scaled));
+        }
+
+        // Home
+        JButton home = new Button("Home", Color.BLACK);
+        home.setAlignmentX(Component.CENTER_ALIGNMENT);
+        home.setBorder(new EmptyBorder(10, 16, 10, 16));
+
+        home.setFont(Utils.spaceGrotesk.deriveFont(20f));
+
+        URL homeIcon = Main.class.getResource("/icons/home_dark.png");
+        if (homeIcon != null) {
+            BufferedImage original = ImageIO.read(homeIcon);
+            Image scaled = original.getScaledInstance(25, 25, Image.SCALE_SMOOTH); // pick your display size
+            home.setIcon(new ImageIcon(scaled));
+        }
+
+        // Favourite
+        JButton favourite = new Button("Favourite", Color.BLACK);
+        favourite.setAlignmentX(Component.CENTER_ALIGNMENT);
+        favourite.setBorder(new EmptyBorder(10, 16, 10, 16));
+
+        favourite.setFont(Utils.spaceGrotesk.deriveFont(20f));
+
+        URL favouriteIcon = Main.class.getResource("/icons/star_dark.png");
+        if (favouriteIcon != null) {
+            BufferedImage original = ImageIO.read(favouriteIcon);
+            Image scaled = original.getScaledInstance(25, 25, Image.SCALE_SMOOTH); // pick your display size
+            favourite.setIcon(new ImageIcon(scaled));
+        }
+
+        // Settings
+        JButton settings = new Button("Settings", Color.BLACK);
+        settings.setAlignmentX(Component.CENTER_ALIGNMENT);
+        favourite.setBorder(new EmptyBorder(10, 16, 10, 16));
+
+        settings.setFont(Utils.spaceGrotesk.deriveFont(20f));
+
+        URL settingIcon = Main.class.getResource("/icons/settings_dark.png");
+        if (settingIcon != null) {
+            BufferedImage original = ImageIO.read(settingIcon);
+            Image scaled = original.getScaledInstance(25, 25, Image.SCALE_SMOOTH); // pick your display size
+
+            settings.setIcon(new ImageIcon(scaled));
+        }
+
+        sideBar.add(logoLabel);
+        sideBar.add(home, BorderLayout.CENTER);
+        sideBar.add(favourite, BorderLayout.CENTER);
+        sideBar.add(settings, BorderLayout.CENTER);
         sideBar.add(Box.createVerticalStrut(24));
 
         return sideBar;
@@ -165,14 +229,14 @@ public class Panel extends JFrame {
         buttonBar.setBorder(new EmptyBorder(0, 0, 16, 0));
 
         // Cancel button
-        Button cancel = new Button("CANCEL");
+        Button cancel = new Button("CANCEL", TEXT);
 
         cancel.addActionListener(e ->
             dialog.dispose()
         );
 
         // Save button
-        Button save = new Button("SAVE");
+        Button save = new Button("SAVE", TEXT);
 
         save.addActionListener(e -> {
             FileManager file = new FileManager();
@@ -259,6 +323,7 @@ public class Panel extends JFrame {
         form.add(passL, gbc);
 
         gbc.gridx = 1; gbc.gridy = 1; gbc.weightx = 1; // For passkey text field
+        password.setText(entry.password());
         form.add(password, gbc);
 
         dialog.add(form, BorderLayout.CENTER);
@@ -269,7 +334,7 @@ public class Panel extends JFrame {
         buttonBar.setBorder(new EmptyBorder(0, 0, 16, 0));
 
         // Cancel button
-        Button delete = new Button("DELETE");
+        Button delete = new Button("DELETE", TEXT);
 
         delete.addActionListener(e -> {
             try {
@@ -281,15 +346,15 @@ public class Panel extends JFrame {
         });
 
         // Save button
-        Button show = new Button("SHOW");
+        Button show = new Button("SHOW", TEXT);
 
         final int[] ps = {0};
         show.addActionListener(e -> {
             if (ps[0] == 0) {
-                password.setText(entry.password());
+                password.setEchoChar((char) 0);
                 ps[0] += 1;
             } else {
-                password.setText(".....");
+                password.setEchoChar('\u2022');
                 ps[0] = 0;
             }
         });
@@ -325,12 +390,15 @@ public class Panel extends JFrame {
     //  J-Elements modification
     // ---------------------------------------------------------------
 
-    class Button extends JButton {
+    static class Button extends JButton {
         public static int ARC = 12;
+        public final Color textColor;
 
-        Button(String text) {
+        Button(String text, Color textColor) {
             super(text);
-            setForeground(TEXT);
+            this.textColor = textColor;
+
+            setForeground(textColor);
             setFont(Utils.spaceGrotesk.deriveFont(Font.BOLD, 13f));
             setFocusPainted(false);
             setContentAreaFilled(false);
@@ -345,9 +413,9 @@ public class Panel extends JFrame {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            Color fill = getModel().isPressed() ? CARD_HOVER
-                    : getModel().isRollover() ? CARD_HOVER
-                    : CARD_BG;
+            Color fill = getModel().isPressed() ? BUTTON_PRESS
+                    : getModel().isRollover() ? BUTTON_HOVER
+                    : BUTTON;
 
             g2.setColor(fill);
             g2.fill(new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, ARC, ARC));
