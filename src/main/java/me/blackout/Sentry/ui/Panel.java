@@ -1,7 +1,6 @@
 package me.blackout.Sentry.ui;
 
 import me.blackout.Sentry.Main;
-import me.blackout.Sentry.test;
 import me.blackout.Sentry.ui.elements.CardRenderer;
 import me.blackout.Sentry.utils.file.FileManager;
 import me.blackout.Sentry.utils.Utils;
@@ -31,6 +30,7 @@ public class Panel extends JFrame {
     private static final Color BUTTON_TEXT = ON_PRIMARY;
 
     private static final Color TEXT = new Color(230, 225, 229);
+    private static final Color FIELD = new Color(202, 196, 208);
 
     private static final Color PANEL_BG = new Color(28, 27, 31);
     private static final Color SIDEBAR_BG = new Color(35, 33, 39);
@@ -141,12 +141,7 @@ public class Panel extends JFrame {
         home.setForeground(TEXT);
         home.setFont(Utils.spaceGrotesk.deriveFont(20f));
 
-        URL homeIcon = Main.class.getResource("/icons/light/home_light.png");
-        if (homeIcon != null) {
-            BufferedImage original = ImageIO.read(homeIcon);
-            Image scaled = original.getScaledInstance(25, 25, Image.SCALE_SMOOTH); // pick your display size
-            home.setIcon(new ImageIcon(scaled));
-        }
+        home.setIcon(new ImageIcon(icon("light/home_light.png")));
 
         // Favourite
         JLabel favourite = new JLabel("Favourite");
@@ -155,12 +150,7 @@ public class Panel extends JFrame {
         favourite.setForeground(TEXT);
         favourite.setFont(Utils.spaceGrotesk.deriveFont(20f));
 
-        URL favouriteIcon = Main.class.getResource("/icons/light/favourite_light.png");
-        if (favouriteIcon != null) {
-            BufferedImage original = ImageIO.read(favouriteIcon);
-            Image scaled = original.getScaledInstance(25, 25, Image.SCALE_SMOOTH); // pick your display size
-            favourite.setIcon(new ImageIcon(scaled));
-        }
+        favourite.setIcon(new ImageIcon(icon("light/favourite_light.png")));
 
         // Settings
         JLabel settings = new JLabel("Settings");
@@ -168,14 +158,7 @@ public class Panel extends JFrame {
 
         settings.setForeground(TEXT);
         settings.setFont(Utils.spaceGrotesk.deriveFont(20f));
-
-        URL settingIcon = Main.class.getResource("/icons/light/settings_light.png");
-        if (settingIcon != null) {
-            BufferedImage original = ImageIO.read(settingIcon);
-            Image scaled = original.getScaledInstance(25, 25, Image.SCALE_SMOOTH); // pick your display size
-
-            settings.setIcon(new ImageIcon(scaled));
-        }
+        settings.setIcon(new ImageIcon(icon("light/settings_light.png")));
 
         sideBar.add(logoLabel);
         sideBar.add(home);
@@ -184,6 +167,21 @@ public class Panel extends JFrame {
         sideBar.add(Box.createVerticalStrut(24));
 
         return sideBar;
+    }
+
+    private Image icon(String path) {
+        URL icon = Main.class.getResource("/icons/" + path);
+        if (icon != null) {
+            BufferedImage original = null;
+            try {
+                original = ImageIO.read(icon);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return original.getScaledInstance(25, 25, Image.SCALE_SMOOTH);
+        }
+
+        return null;
     }
 
     // Dialog panel
@@ -440,7 +438,7 @@ public class Panel extends JFrame {
         return new Color(c.getRed(), c.getGreen(), c.getBlue(), a);
     }
 
-    class TextField extends JTextField {
+    static class TextField extends JTextField {
         private final String placeholder;
 
         public TextField(String placeholder) {
@@ -448,7 +446,7 @@ public class Panel extends JFrame {
             setOpaque(false);
             setBorder(new EmptyBorder(8, 14, 8, 14));
             setFont(Utils.spaceGrotesk.deriveFont(13f));
-            setForeground(TEXT);
+            setForeground(ON_PRIMARY);
         }
 
         @Override
@@ -457,12 +455,12 @@ public class Panel extends JFrame {
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             // Box
-            g2.setColor(PANEL_BG);
-            g2.fill(new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, 12, 12));
+            g2.setColor(FIELD);
+            g2.fill(new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, 30, 30));
 
             // Box border
-            g2.setColor(CARD_BORDER);
-            g2.draw(new RoundRectangle2D.Float(0, 0, getWidth() - 2, getHeight() - 2, 12, 12));
+            //g2.setColor(CARD_BORDER);
+            //g2.draw(new RoundRectangle2D.Float(0, 0, getWidth() - 2, getHeight() - 2, 12, 12));
 
             g2.dispose();
             super.paintComponent(g);
@@ -488,8 +486,8 @@ public class Panel extends JFrame {
             setOpaque(false);
             setBorder(new EmptyBorder(8, 14, 8, 14));
             setFont(Utils.spaceGrotesk.deriveFont(13f));
-            setForeground(Color.WHITE);
-            setCaretColor(Color.WHITE);
+            setForeground(ON_PRIMARY);
+            setCaretColor(ON_PRIMARY);
         }
 
         @Override
@@ -498,12 +496,12 @@ public class Panel extends JFrame {
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             // Box
-            g2.setColor(PANEL_BG);
-            g2.fill(new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, 12, 12));
+            g2.setColor(FIELD);
+            g2.fill(new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, 30, 30));
 
             // Box border
-            g2.setColor(CARD_BORDER);
-            g2.draw(new RoundRectangle2D.Float(0, 0, getWidth() - 2, getHeight() - 2, 12, 12));
+            //g2.setColor(CARD_BORDER);
+            //g2.draw(new RoundRectangle2D.Float(0, 0, getWidth() - 2, getHeight() - 2, 12, 12));
 
             g2.dispose();
             super.paintComponent(g);
