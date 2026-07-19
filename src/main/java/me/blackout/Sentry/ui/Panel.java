@@ -1,6 +1,7 @@
 package me.blackout.Sentry.ui;
 
 import me.blackout.Sentry.Main;
+import me.blackout.Sentry.test;
 import me.blackout.Sentry.ui.elements.CardRenderer;
 import me.blackout.Sentry.utils.file.FileManager;
 import me.blackout.Sentry.utils.Utils;
@@ -23,15 +24,16 @@ public class Panel extends JFrame {
     // ---------------------------------------------------------------
     //                          Color palette
     // ---------------------------------------------------------------
-    private static final Color BUTTON = new Color(93, 109, 201);
-    private static final Color BUTTON_PRESS = new Color(79, 92, 171);
-    private static final Color BUTTON_HOVER = new Color(83, 97, 182);
+    static final Color PRIMARY = new Color(208, 188, 255);
+    static final Color ON_PRIMARY = new Color(56, 30, 114);
 
-    private static final Color TEXT = new Color(253, 253, 253);
-    //private static final Color TEXT_MUTED = new Color(138, 136, 158);
+    private static final Color BUTTON = PRIMARY;
+    private static final Color BUTTON_TEXT = ON_PRIMARY;
 
-    private static final Color PANEL_BG = new Color(0x1C, 0x1B, 0x1F);
-    private static final Color SIDEBAR_BG = new Color(93, 109, 201);
+    private static final Color TEXT = new Color(230, 225, 229);
+
+    private static final Color PANEL_BG = new Color(28, 27, 31);
+    private static final Color SIDEBAR_BG = new Color(35, 33, 39);
 
     private static final Color CARD_BG = new Color(43, 103, 178);
     private static final Color CARD_HOVER = new Color(38, 90, 154);
@@ -92,7 +94,7 @@ public class Panel extends JFrame {
         center.add(scroll);
 
         // Button
-        Button addButton = new Button("+  ADD KEYS", TEXT);
+        Button addButton = new Button("+  ADD KEYS", BUTTON_TEXT);
 
         // Button action
         addButton.addActionListener(e ->
@@ -109,7 +111,7 @@ public class Panel extends JFrame {
     }
 
     public JPanel sidePanel() throws IOException {
-        JPanel sideBar = new JPanel();
+        JPanel sideBar = new JPanel(new BorderLayout());
 
         // Set layout
         sideBar.setLayout(new BoxLayout(sideBar, BoxLayout.Y_AXIS));
@@ -119,13 +121,13 @@ public class Panel extends JFrame {
 
         // Logo
         JLabel logoLabel = new JLabel("SENTRY");
-        logoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        logoLabel.setBorder(new EmptyBorder(0, 0, 20, 30));
+        logoLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        logoLabel.setBorder(new EmptyBorder(0, 20, 20, 0));
 
-        logoLabel.setForeground(Color.BLACK);
+        logoLabel.setForeground(TEXT);
         logoLabel.setFont(Utils.spaceGrotesk.deriveFont(Font.BOLD, 30f));
 
-        URL iconURL = Main.class.getResource("/Sentry.png");
+        URL iconURL = Main.class.getResource("/sentry_transparent.png");
         if (iconURL != null) {
             BufferedImage original = ImageIO.read(iconURL);
             Image scaled = original.getScaledInstance(48, 48, Image.SCALE_SMOOTH);
@@ -133,13 +135,13 @@ public class Panel extends JFrame {
         }
 
         // Home
-        JButton home = new Button("Home", Color.BLACK);
-        home.setAlignmentX(Component.CENTER_ALIGNMENT);
-        home.setBorder(new EmptyBorder(10, 16, 10, 16));
+        JLabel home = new JLabel("Home");
+        home.setBorder(new EmptyBorder(10, 20, 10, 0));
 
+        home.setForeground(TEXT);
         home.setFont(Utils.spaceGrotesk.deriveFont(20f));
 
-        URL homeIcon = Main.class.getResource("/icons/home_dark.png");
+        URL homeIcon = Main.class.getResource("/icons/light/home_light.png");
         if (homeIcon != null) {
             BufferedImage original = ImageIO.read(homeIcon);
             Image scaled = original.getScaledInstance(25, 25, Image.SCALE_SMOOTH); // pick your display size
@@ -147,13 +149,13 @@ public class Panel extends JFrame {
         }
 
         // Favourite
-        JButton favourite = new Button("Favourite", Color.BLACK);
-        favourite.setAlignmentX(Component.CENTER_ALIGNMENT);
-        favourite.setBorder(new EmptyBorder(10, 16, 10, 16));
+        JLabel favourite = new JLabel("Favourite");
+        favourite.setBorder(new EmptyBorder(10, 20, 10, 0));
 
+        favourite.setForeground(TEXT);
         favourite.setFont(Utils.spaceGrotesk.deriveFont(20f));
 
-        URL favouriteIcon = Main.class.getResource("/icons/star_dark.png");
+        URL favouriteIcon = Main.class.getResource("/icons/light/favourite_light.png");
         if (favouriteIcon != null) {
             BufferedImage original = ImageIO.read(favouriteIcon);
             Image scaled = original.getScaledInstance(25, 25, Image.SCALE_SMOOTH); // pick your display size
@@ -161,13 +163,13 @@ public class Panel extends JFrame {
         }
 
         // Settings
-        JButton settings = new Button("Settings", Color.BLACK);
-        settings.setAlignmentX(Component.CENTER_ALIGNMENT);
-        favourite.setBorder(new EmptyBorder(10, 16, 10, 16));
+        JLabel settings = new JLabel("Settings");
+        settings.setBorder(new EmptyBorder(10, 20, 10, 0));
 
+        settings.setForeground(TEXT);
         settings.setFont(Utils.spaceGrotesk.deriveFont(20f));
 
-        URL settingIcon = Main.class.getResource("/icons/settings_dark.png");
+        URL settingIcon = Main.class.getResource("/icons/light/settings_light.png");
         if (settingIcon != null) {
             BufferedImage original = ImageIO.read(settingIcon);
             Image scaled = original.getScaledInstance(25, 25, Image.SCALE_SMOOTH); // pick your display size
@@ -176,9 +178,9 @@ public class Panel extends JFrame {
         }
 
         sideBar.add(logoLabel);
-        sideBar.add(home, BorderLayout.CENTER);
-        sideBar.add(favourite, BorderLayout.CENTER);
-        sideBar.add(settings, BorderLayout.CENTER);
+        sideBar.add(home);
+        sideBar.add(favourite);
+        sideBar.add(settings);
         sideBar.add(Box.createVerticalStrut(24));
 
         return sideBar;
@@ -229,14 +231,14 @@ public class Panel extends JFrame {
         buttonBar.setBorder(new EmptyBorder(0, 0, 16, 0));
 
         // Cancel button
-        Button cancel = new Button("CANCEL", TEXT);
+        Button cancel = new Button("CANCEL", ON_PRIMARY);
 
         cancel.addActionListener(e ->
             dialog.dispose()
         );
 
         // Save button
-        Button save = new Button("SAVE", TEXT);
+        Button save = new Button("SAVE", ON_PRIMARY);
 
         save.addActionListener(e -> {
             FileManager file = new FileManager();
@@ -334,7 +336,7 @@ public class Panel extends JFrame {
         buttonBar.setBorder(new EmptyBorder(0, 0, 16, 0));
 
         // Cancel button
-        Button delete = new Button("DELETE", TEXT);
+        Button delete = new Button("DELETE", ON_PRIMARY);
 
         delete.addActionListener(e -> {
             try {
@@ -346,7 +348,7 @@ public class Panel extends JFrame {
         });
 
         // Save button
-        Button show = new Button("SHOW", TEXT);
+        Button show = new Button("SHOW", ON_PRIMARY);
 
         final int[] ps = {0};
         show.addActionListener(e -> {
@@ -413,12 +415,18 @@ public class Panel extends JFrame {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            Color fill = getModel().isPressed() ? BUTTON_PRESS
-                    : getModel().isRollover() ? BUTTON_HOVER
-                    : BUTTON;
+            float arc = getHeight(); // radius = height/2 -> full pill/stadium shape
 
-            g2.setColor(fill);
-            g2.fill(new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, ARC, ARC));
+            g2.setColor(BUTTON);
+            g2.fill(new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, arc, arc));
+
+            if (getModel().isPressed()) {
+                g2.setColor(withAlpha(ON_PRIMARY, 32));
+                g2.fill(new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, arc, arc));
+            } else if (getModel().isRollover()) {
+                g2.setColor(withAlpha(ON_PRIMARY, 20));
+                g2.fill(new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, arc, arc));
+            }
 
             g2.dispose();
             super.paintComponent(g);
@@ -426,6 +434,10 @@ public class Panel extends JFrame {
 
         @Override
         protected void paintBorder(Graphics g) {/*  No borders */ }
+    }
+
+    public static Color withAlpha(Color c, int a) {
+        return new Color(c.getRed(), c.getGreen(), c.getBlue(), a);
     }
 
     class TextField extends JTextField {

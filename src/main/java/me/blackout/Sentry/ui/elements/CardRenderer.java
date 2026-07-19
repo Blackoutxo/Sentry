@@ -60,7 +60,7 @@ public class CardRenderer extends JPanel implements ListCellRenderer<Utils.Entry
 
         JPanel card = new JPanel(new BorderLayout());
         card.setOpaque(false);
-        card.setBorder(new LineBorder(border, 5, new EmptyBorder(0, 0, 0, 0)));
+        card.setBorder(new LineBorder(border, 8, new EmptyBorder(0, 0, 0, 0)));
         card.setBackground(isSelected ? hover : background);
         card.add(this, BorderLayout.CENTER);
 

@@ -49,19 +49,6 @@ public class Utils {
         frame.setIconImages(icons);
     }
 
-    // Check masterkey
-    public static boolean checkMasterkey(String input) {
-        for (Entry entry : allEntries) {
-            return entry.password.equals(input) && entry.title.equals("masterkey");
-        }
-        return false;
-    }
-
-    public static boolean keyExists() {
-        Optional<Entry> t = Utils.findByTitle("masterkey");
-        return t.isPresent();
-    }
-
     // Set in list model
     public static void setListModel() {
         for (Entry entry : allEntries) {
