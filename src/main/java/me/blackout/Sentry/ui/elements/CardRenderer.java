@@ -1,10 +1,15 @@
 package me.blackout.Sentry.ui.elements;
 
+import me.blackout.Sentry.Main;
 import me.blackout.Sentry.utils.Utils;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
 
 public class CardRenderer extends JPanel implements ListCellRenderer<Utils.Entry> {
     private final JLabel title = new JLabel();
@@ -19,7 +24,7 @@ public class CardRenderer extends JPanel implements ListCellRenderer<Utils.Entry
         this.border = border;
 
         setLayout(new BorderLayout(15, 0));
-        setBorder(new EmptyBorder(6, 4, 6, 4));
+        setBorder(new EmptyBorder(10, 4, 10, 4));
         setOpaque(false);
 
         JPanel textPanel = new JPanel();
@@ -30,11 +35,10 @@ public class CardRenderer extends JPanel implements ListCellRenderer<Utils.Entry
         title.setAlignmentY(SwingConstants.CENTER);
         title.setForeground(textColor);
 
-        avatar.setOpaque(false);
+        avatar.setOpaque(true);
         avatar.setForeground(textColor);
-        avatar.setSize(new Dimension(38, 38));
         avatar.setHorizontalAlignment(SwingConstants.HORIZONTAL);
-        avatar.setFont(Utils.spaceGrotesk.deriveFont(Font.BOLD, 15f));
+        avatar.setFont(Utils.spaceGrotesk.deriveFont(Font.BOLD, 20f));
 
         textPanel.add(avatar);
         textPanel.add(title);
@@ -44,10 +48,8 @@ public class CardRenderer extends JPanel implements ListCellRenderer<Utils.Entry
     }
 
     private JPanel wrapAvatar() {
-        JPanel pnl = new JPanel();
-        pnl.setOpaque(false);
-        pnl.setBorder(new EmptyBorder(0, 8, 0, 0));
-        pnl.add(avatar, BorderLayout.CENTER);
+        JPanel pnl = new JPanel(new BorderLayout());
+        pnl.add(avatar, BorderLayout.WEST);
         return pnl;
     }
 
@@ -56,20 +58,37 @@ public class CardRenderer extends JPanel implements ListCellRenderer<Utils.Entry
         title.setText(entry.title());
 
         avatar.setText(entry.title().substring(0, 1).toUpperCase());
-        avatar.setBackground(color(entry.title()));
+        avatar.setBackground(isSelected ? hover : background);
+        avatar.setPreferredSize(new Dimension(list.getWidth() / 10, list.getFixedCellHeight()));
 
-        JPanel card = new JPanel(new BorderLayout());
-        card.setOpaque(false);
-        card.setBorder(new LineBorder(border, 30, new EmptyBorder(0, 0, 0, 0)));
+        RoundedPanel card = new RoundedPanel(20);
+        card.setLayout(new BorderLayout());
+        card.setBorder(new EmptyBorder(7, 10, 10, 10));
         card.setBackground(isSelected ? hover : background);
         card.add(this, BorderLayout.CENTER);
+        card.add(setFavourite(isSelected));
 
         JPanel outer = new JPanel(new BorderLayout());
         outer.setOpaque(false);
-        outer.setBorder(new EmptyBorder(4, 0, 4, 0));
+        outer.setBorder(new EmptyBorder(0, 0, 8, 0));
         outer.add(card, BorderLayout.CENTER);
 
         return outer;
+    }
+
+    private JLabel setFavourite(boolean isSelected) {
+        JLabel icon = new JLabel();
+
+        URL favouriteURL = Main.class.getResource(isSelected ? "/icons/light/filled/favourite_light.png" : "/icons/light/favourite_light.png");
+        if (favouriteURL == null) return null;
+        BufferedImage original = null;
+        try {   original = ImageIO.read(favouriteURL);   } catch (IOException ignored) {}
+        Image scaled = original.getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+        icon.setIcon(new ImageIcon(scaled));
+
+        add(icon, BorderLayout.WEST);
+
+        return icon;
     }
 
     private Color color(String seed) {

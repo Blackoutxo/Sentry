@@ -35,8 +35,8 @@ public class Panel extends JFrame {
     private static final Color PANEL_BG = new Color(28, 27, 31);
     private static final Color SIDEBAR_BG = new Color(35, 33, 39);
 
-    private static final Color CARD_BG = new Color(43, 103, 178);
-    private static final Color CARD_HOVER = new Color(38, 90, 154);
+    private static final Color CARD_BG = new Color(35, 33, 39);
+    private static final Color CARD_HOVER = new Color(48, 46, 54);
     private static final Color CARD_BORDER = new Color(255, 255, 255);
 
     // Field vars
@@ -311,6 +311,7 @@ public class Panel extends JFrame {
         form.add(titleL, gbc);
 
         gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = 1; // For title text field
+        title.setEditable(false);
         form.add(title, gbc);
 
         // Passkey
