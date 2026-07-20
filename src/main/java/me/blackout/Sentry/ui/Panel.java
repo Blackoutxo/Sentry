@@ -42,6 +42,8 @@ public class Panel extends JFrame {
     // Field vars
     private final JList<Utils.Entry> entryList = new JList<>(listModel);
 
+    private static FileManager file = new FileManager();
+
     // Panel
     public Panel() throws IOException, FontFormatException {
         super("Sentry");
@@ -239,8 +241,6 @@ public class Panel extends JFrame {
         Button save = new Button("SAVE", ON_PRIMARY);
 
         save.addActionListener(e -> {
-            FileManager file = new FileManager();
-
             String strTitle = title.getText().trim();
             String passKey = new String(password.getPassword());
 
@@ -383,7 +383,7 @@ public class Panel extends JFrame {
         if (confirm == JOptionPane.YES_OPTION) {
             allEntries.remove(entry);
             listModel.removeElement(entry);
-            new FileManager().saveEntries();
+            file.saveEntries();
         }
     }
 

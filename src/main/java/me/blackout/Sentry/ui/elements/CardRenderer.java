@@ -92,15 +92,17 @@ public class CardRenderer extends JPanel implements ListCellRenderer<Utils.Entry
         icon.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                boolean favourite = file.favourite.contains(entry.title());
+                boolean favourite = !file.favourite.contains(entry.title());
 
                 if (favourite) {
-                    file.favourite.remove(entry.title());
-                } else {
                     file.favourite.add(entry.title());
+                } else {
+                    file.favourite.remove(entry.title());
                 }
 
                 loadIcon(icon, favourite);
+
+
             }
         });
 

@@ -25,6 +25,7 @@ public class Utils {
     public static List<Entry> allEntries = new ArrayList<>();
     public static final DefaultListModel<Utils.Entry> listModel = new DefaultListModel<>();
 
+    private static FileManager file = new FileManager();
     public static Font spaceGrotesk;
 
     // Register font
@@ -65,8 +66,6 @@ public class Utils {
 
     // Key generation
     public static Key generateKey(String masterKey) throws GeneralSecurityException, IOException {
-        FileManager file = new FileManager();
-
         // Read file
         byte[] salt = Files.readAllBytes(Path.of(file.SALT_FILE));
 

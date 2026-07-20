@@ -110,9 +110,13 @@ public class FileManager {
         }
 
         // Favourite entries
-        for (String string : favourite) {
+        line.append(encryptField("Favourite:[", key));
+        for (String title : favourite) {
+            String encryptedTitle = encryptField(title, key);
 
+            line.append(encryptedTitle).append(System.lineSeparator());
         }
+        line.append(encryptField("]", key));
 
         try (FileWriter writer = new FileWriter(DATA_FILE, false)) {
             writer.write(line.toString());
