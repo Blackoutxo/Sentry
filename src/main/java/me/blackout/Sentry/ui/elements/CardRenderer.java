@@ -2,11 +2,15 @@ package me.blackout.Sentry.ui.elements;
 
 import me.blackout.Sentry.Main;
 import me.blackout.Sentry.utils.Utils;
+import me.blackout.Sentry.utils.file.FileManager;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -66,7 +70,7 @@ public class CardRenderer extends JPanel implements ListCellRenderer<Utils.Entry
         card.setBorder(new EmptyBorder(7, 10, 10, 10));
         card.setBackground(isSelected ? hover : background);
         card.add(this, BorderLayout.CENTER);
-        card.add(setFavourite(isSelected));
+        card.add(setFavouriteIcon(entry), BorderLayout.EAST);
 
         JPanel outer = new JPanel(new BorderLayout());
         outer.setOpaque(false);
@@ -76,19 +80,46 @@ public class CardRenderer extends JPanel implements ListCellRenderer<Utils.Entry
         return outer;
     }
 
-    private JLabel setFavourite(boolean isSelected) {
+    private JLabel setFavouriteIcon(Utils.Entry entry) {
         JLabel icon = new JLabel();
+        FileManager file = new FileManager();
 
-        URL favouriteURL = Main.class.getResource(isSelected ? "/icons/light/filled/favourite_light.png" : "/icons/light/favourite_light.png");
-        if (favouriteURL == null) return null;
-        BufferedImage original = null;
-        try {   original = ImageIO.read(favouriteURL);   } catch (IOException ignored) {}
-        Image scaled = original.getScaledInstance(32, 32, Image.SCALE_SMOOTH);
-        icon.setIcon(new ImageIcon(scaled));
+        icon.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        add(icon, BorderLayout.WEST);
+        boolean isFavourite = file.favourite.contains(entry.title());
+        loadIcon(icon, isFavourite);
+
+        icon.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                boolean favourite = file.favourite.contains(entry.title());
+
+                if (favourite) {
+                    file.favourite.remove(entry.title());
+                } else {
+                    file.favourite.add(entry.title());
+                }
+
+                loadIcon(icon, favourite);
+            }
+        });
+
 
         return icon;
+    }
+
+    private void loadIcon(JLabel label, boolean filled) {
+        String path = filled ? "/icons/light/filled/favourite_light.png" : "/icons/light/favourite_light.png";
+
+        URL url = Main.class.getResource(path);
+        if (url == null) return;
+        try {
+            BufferedImage original = ImageIO.read(url);
+            Image scaled = original.getScaledInstance(20, 20, Image.SCALE_SMOOTH); // smaller than 28 — this is a secondary/inline indicator, not the main avatar
+            label.setIcon(new ImageIcon(scaled));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Color color(String seed) {

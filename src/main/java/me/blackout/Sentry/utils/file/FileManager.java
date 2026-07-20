@@ -15,6 +15,7 @@ public class FileManager {
     public String DATA_FILE = "Sentry.txt";
     public String SALT_FILE = "SalTY.txt";
 
+    public List<String> favourite = new ArrayList<>();
     public Key key;
 
     public SecureRandom secRandom = new SecureRandom();
@@ -99,6 +100,7 @@ public class FileManager {
         // Set key
         key = Utils.generateKey(Sentry.masterKey);
 
+        // Normal entries
         for (Utils.Entry entry : Utils.allEntries) {
 
             String encryptedTitle = encryptField(entry.title(), key);
@@ -107,10 +109,14 @@ public class FileManager {
             line.append(encryptedTitle).append("|").append(encryptedPassword).append(System.lineSeparator());
         }
 
+        // Favourite entries
+        for (String string : favourite) {
+
+        }
+
         try (FileWriter writer = new FileWriter(DATA_FILE, false)) {
             writer.write(line.toString());
         }
-
     }
 
     public void write(byte[] input, String file) throws IOException {
