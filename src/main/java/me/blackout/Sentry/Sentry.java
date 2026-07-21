@@ -38,7 +38,7 @@ public class Sentry {
         file.load(file.DATA_FILE);
 
         // Init panel here
-        me.blackout.Sentry.ui.Panel panel = new Panel();
+        Panel panel = new Panel();
         panel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Set Icon for application

@@ -41,7 +41,6 @@ public class Panel extends JFrame {
 
     // Field vars
     private final JList<Utils.Entry> entryList = new JList<>(listModel);
-
     private static FileManager file = new FileManager();
 
     // Panel
@@ -80,18 +79,20 @@ public class Panel extends JFrame {
         center.add(top, BorderLayout.NORTH);
 
         // Entry card
-        entryList.setCellRenderer(new CardRenderer(TEXT, CARD_BG, CARD_HOVER, CARD_BORDER));
-        entryList.setBackground(PANEL_BG);
-        entryList.setFixedCellHeight(64);
-        entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        entryList.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && entryList.getSelectedValue() != null) {
-                openDetailDialog();
-            }
-        });
+//        entryList.setCellRenderer(new CardRenderer(TEXT, CARD_BG, CARD_HOVER, CARD_BORDER));
+//        entryList.setBackground(PANEL_BG);
+//        entryList.setFixedCellHeight(64);
+//        entryList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//        entryList.addListSelectionListener(e -> {
+//            if (!e.getValueIsAdjusting() && entryList.getSelectedValue() != null) {
+//                openDetailDialog();
+//            }
+//        });
+
+        CardRenderer cr = new CardRenderer(TEXT, CARD_BG, CARD_HOVER, CARD_BORDER, entry -> openDetailDialog());
 
         // Scroll panel
-        JScrollPane scroll = new JScrollPane(entryList);
+        JScrollPane scroll = new JScrollPane(cr);
         scroll.setBorder(null);
         center.add(scroll);
 

@@ -28,6 +28,9 @@ public class Utils {
     private static FileManager file = new FileManager();
     public static Font spaceGrotesk;
 
+    public static JPanel listContainer = new JPanel();
+    public static Entry selectedEntry = null;
+
     // Register font
     public static void registerFont() throws IOException, FontFormatException {
         InputStream is = Utils.class.getResourceAsStream("/fonts/SpaceGrotesk/static/SpaceGrotesk-Regular.ttf");

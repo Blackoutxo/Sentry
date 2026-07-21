@@ -14,67 +14,61 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.function.Consumer;
 
-public class CardRenderer extends JPanel implements ListCellRenderer<Utils.Entry> {
-    private final JLabel title = new JLabel();
-    private final JLabel avatar = new JLabel();
-
+public class CardRenderer extends JPanel {
     public final Color background, hover, textColor, border;
+    private final Consumer<Utils.Entry> consumer;
 
-    public CardRenderer(Color textColor, Color background, Color hover, Color border) {
+    public CardRenderer(Color textColor, Color background, Color hover, Color border, Consumer<Utils.Entry> consumer) {
         this.background = background;
         this.hover = hover;
         this.textColor = textColor;
         this.border = border;
 
-        setLayout(new BorderLayout(15, 0));
-        setBorder(new EmptyBorder(10, 4, 10, 4));
-        setOpaque(false);
+        this.consumer = consumer;
 
-        JPanel textPanel = new JPanel();
-        textPanel.setOpaque(false);
-        textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
 
-        title.setFont(Utils.spaceGrotesk.deriveFont(Font.BOLD, 14f));
-        title.setAlignmentY(SwingConstants.CENTER);
+    }
+
+    // Build card
+    private JPanel buildCard(Utils.Entry entry) {
+        boolean isSelected = entry.equals(Utils.selectedEntry);
+
+        JLabel title = new JLabel(entry.title());
         title.setForeground(textColor);
+        title.setFont(Utils.spaceGrotesk.deriveFont(14f));
 
+        JLabel avatar = new JLabel(entry.title().substring(0, 1).toUpperCase());
         avatar.setOpaque(true);
+        avatar.setHorizontalAlignment(SwingConstants.CENTER);
         avatar.setForeground(textColor);
-        avatar.setHorizontalAlignment(SwingConstants.HORIZONTAL);
-        avatar.setFont(Utils.spaceGrotesk.deriveFont(Font.BOLD, 20f));
+        avatar.setBackground(color(entry.title()));
+        avatar.setFont(Utils.spaceGrotesk.deriveFont(Font.BOLD, 15f));
+        avatar.setPreferredSize(new Dimension(70, 0));
 
-        textPanel.add(avatar);
-        textPanel.add(title);
-
-        add(wrapAvatar(), BorderLayout.WEST);
-        add(textPanel, BorderLayout.CENTER);
-    }
-
-    private JPanel wrapAvatar() {
-        JPanel pnl = new JPanel(new BorderLayout());
-        pnl.add(avatar, BorderLayout.WEST);
-        return pnl;
-    }
-
-    @Override
-    public Component getListCellRendererComponent(JList<? extends Utils.Entry> list, Utils.Entry entry, int index, boolean isSelected, boolean cellHasFocus) {
-        title.setText(entry.title());
-
-        avatar.setText(entry.title().substring(0, 1).toUpperCase());
-        avatar.setBackground(isSelected ? hover : background);
-        avatar.setPreferredSize(new Dimension(list.getWidth() / 10, list.getFixedCellHeight()));
+        JLabel favouriteIcon = setFavouriteIcon(entry);
 
         RoundedPanel card = new RoundedPanel(20);
         card.setLayout(new BorderLayout());
-        card.setBorder(new EmptyBorder(7, 10, 10, 10));
         card.setBackground(isSelected ? hover : background);
-        card.add(this, BorderLayout.CENTER);
-        card.add(setFavouriteIcon(entry), BorderLayout.EAST);
+        card.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        card.add(avatar, BorderLayout.WEST);
+        card.add(title, BorderLayout.CENTER);
+        card.add(favouriteIcon, BorderLayout.EAST);
+
+        card.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Utils.selectedEntry = entry;
+                //refresh(currentFilter);
+                if (consumer != null) consumer.accept(entry);
+            }
+        });
 
         JPanel outer = new JPanel(new BorderLayout());
         outer.setOpaque(false);
-        outer.setBorder(new EmptyBorder(0, 0, 8, 0));
+        outer.setBorder(new EmptyBorder(10, 0, 10, 0));
         outer.add(card, BorderLayout.CENTER);
 
         return outer;
