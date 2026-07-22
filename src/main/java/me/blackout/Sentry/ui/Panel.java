@@ -43,6 +43,8 @@ public class Panel extends JFrame {
     private final JList<Utils.Entry> entryList = new JList<>(listModel);
     private static FileManager file = new FileManager();
 
+    private final CardRenderer cardRenderer = new CardRenderer(TEXT, CARD_BG, CARD_HOVER, CARD_BORDER, entry -> openDetailDialog());
+
     // Panel
     public Panel() throws IOException, FontFormatException {
         super("Sentry");
@@ -89,10 +91,8 @@ public class Panel extends JFrame {
 //            }
 //        });
 
-        CardRenderer cr = new CardRenderer(TEXT, CARD_BG, CARD_HOVER, CARD_BORDER, entry -> openDetailDialog());
-
         // Scroll panel
-        JScrollPane scroll = new JScrollPane(cr);
+        JScrollPane scroll = new JScrollPane(cardRenderer.getContainer());
         scroll.setBorder(null);
         center.add(scroll);
 
@@ -110,6 +110,7 @@ public class Panel extends JFrame {
         bottomBar.add(addButton);
 
         center.add(bottomBar, BorderLayout.SOUTH);
+        cardRenderer.refresh();
         return center;
     }
 

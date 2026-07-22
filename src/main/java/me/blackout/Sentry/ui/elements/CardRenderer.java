@@ -16,9 +16,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.function.Consumer;
 
+import static me.blackout.Sentry.utils.Utils.allEntries;
+
 public class CardRenderer extends JPanel {
     public final Color background, hover, textColor, border;
     private final Consumer<Utils.Entry> consumer;
+
+    public static JPanel listContainer = new JPanel();
+    public static Utils.Entry selectedEntry = null;
+    private String currentFilter = "";
 
     public CardRenderer(Color textColor, Color background, Color hover, Color border, Consumer<Utils.Entry> consumer) {
         this.background = background;
@@ -28,12 +34,17 @@ public class CardRenderer extends JPanel {
 
         this.consumer = consumer;
 
+        listContainer.setLayout(new BoxLayout(listContainer, BoxLayout.Y_AXIS));
+        listContainer.setOpaque(false);
+    }
 
+    public JPanel getContainer() {
+        return listContainer;
     }
 
     // Build card
     private JPanel buildCard(Utils.Entry entry) {
-        boolean isSelected = entry.equals(Utils.selectedEntry);
+        boolean isSelected = entry.equals(selectedEntry);
 
         JLabel title = new JLabel(entry.title());
         title.setForeground(textColor);
@@ -60,8 +71,8 @@ public class CardRenderer extends JPanel {
         card.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Utils.selectedEntry = entry;
-                //refresh(currentFilter);
+                selectedEntry = entry;
+                refresh(currentFilter);
                 if (consumer != null) consumer.accept(entry);
             }
         });
@@ -74,6 +85,25 @@ public class CardRenderer extends JPanel {
         return outer;
     }
 
+    // Refresh list container
+    public void refresh(String filter) {
+        currentFilter = filter == null ? "" : filter;
+
+        String t = currentFilter.trim().toLowerCase();
+        for (Utils.Entry entry : allEntries) {
+            if (t.isEmpty() || entry.title().toLowerCase().equals(t))
+                listContainer.add(buildCard(entry));
+        }
+
+        listContainer.revalidate();
+        listContainer.repaint();
+    }
+
+    public void refresh() {
+        refresh(currentFilter);
+    }
+
+    // Icon
     private JLabel setFavouriteIcon(Utils.Entry entry) {
         JLabel icon = new JLabel();
         FileManager file = new FileManager();
@@ -88,18 +118,14 @@ public class CardRenderer extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 boolean favourite = !file.favourite.contains(entry.title());
 
-                if (favourite) {
-                    file.favourite.add(entry.title());
-                } else {
-                    file.favourite.remove(entry.title());
-                }
+                if (favourite) file.favourite.add(entry.title());
+                 else file.favourite.remove(entry.title());
 
                 loadIcon(icon, favourite);
 
-
+                e.consume();
             }
         });
-
 
         return icon;
     }
