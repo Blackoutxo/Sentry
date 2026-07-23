@@ -35,6 +35,7 @@ public class CardRenderer extends JPanel {
         this.consumer = consumer;
 
         listContainer.setLayout(new BoxLayout(listContainer, BoxLayout.Y_AXIS));
+        listContainer.setBackground(Color.BLACK);
         listContainer.setOpaque(false);
     }
 
@@ -67,6 +68,7 @@ public class CardRenderer extends JPanel {
         card.add(avatar, BorderLayout.WEST);
         card.add(title, BorderLayout.CENTER);
         card.add(favouriteIcon, BorderLayout.EAST);
+        card.setSize(new Dimension(0, 30));
 
         card.addMouseListener(new MouseAdapter() {
             @Override
@@ -88,6 +90,7 @@ public class CardRenderer extends JPanel {
     // Refresh list container
     public void refresh(String filter) {
         currentFilter = filter == null ? "" : filter;
+        listContainer.removeAll();
 
         String t = currentFilter.trim().toLowerCase();
         for (Utils.Entry entry : allEntries) {
